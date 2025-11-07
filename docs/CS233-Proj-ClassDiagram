@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.2 Chrome/134.0.6998.178 Electron/35.1.2 Safari/537.36" version="26.2.2">
   <diagram name="Page-1" id="LL7LizHyoV0Tt-Hm6qAD">
-    <mxGraphModel dx="2059" dy="1611" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0">
+    <mxGraphModel dx="1799" dy="1718" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -277,7 +277,7 @@
         <mxCell id="9WLmVXgaDcgDTIrr52kv-375" value="" style="verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.sun;fillColor=#fff2cc;strokeColor=#d6b656;gradientColor=#ffd966;" parent="1" vertex="1">
           <mxGeometry x="1010" width="120" height="119" as="geometry" />
         </mxCell>
-        <mxCell id="S7JaknvzryFcpf1w3_Vt-4" value="Menus.txt" style="shape=note;size=20;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
+        <mxCell id="S7JaknvzryFcpf1w3_Vt-4" value="MenuItems.txt" style="shape=note;size=20;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="270" y="68.63" width="100" height="62.37" as="geometry" />
         </mxCell>
         <mxCell id="S7JaknvzryFcpf1w3_Vt-6" value="RestaurantManager" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
