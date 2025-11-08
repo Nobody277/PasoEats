@@ -5,7 +5,7 @@
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="QFX_sH9UGsD0gNKceVcq-1" value="&lt;div&gt;User&lt;/div&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
-                    <mxGeometry x="40" y="-56.5" width="200" height="232" as="geometry">
+                    <mxGeometry x="40" y="-69.5" width="200" height="232" as="geometry">
                         <mxRectangle x="40" y="40" width="70" height="30" as="alternateBounds"/>
                     </mxGeometry>
                 </mxCell>
@@ -125,7 +125,7 @@
                 </mxCell>
                 <mxCell id="S7JaknvzryFcpf1w3_Vt-2" value="Extends" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="QFX_sH9UGsD0gNKceVcq-37" connectable="0" vertex="1">
                     <mxGeometry x="0.686" relative="1" as="geometry">
-                        <mxPoint x="-48" y="-16" as="offset"/>
+                        <mxPoint x="-19" y="-4" as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="QFX_sH9UGsD0gNKceVcq-13" value="Administrator extends User" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;rounded=0;" parent="1" vertex="1">
@@ -364,12 +364,13 @@
                 <mxCell id="S7JaknvzryFcpf1w3_Vt-58" value="public MenuItem(String name, String description, double price)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;rounded=0;" parent="S7JaknvzryFcpf1w3_Vt-54" vertex="1">
                     <mxGeometry y="164" width="200" height="42" as="geometry"/>
                 </mxCell>
-                <mxCell id="S7JaknvzryFcpf1w3_Vt-66" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=diamond;startFill=1;startSize=14;" parent="1" source="S7JaknvzryFcpf1w3_Vt-29" target="S7JaknvzryFcpf1w3_Vt-24" edge="1">
+                <mxCell id="S7JaknvzryFcpf1w3_Vt-66" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=diamond;startFill=1;startSize=14;" parent="1" target="S7JaknvzryFcpf1w3_Vt-24" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint y="641"/>
                             <mxPoint y="973"/>
                         </Array>
+                        <mxPoint x="40" y="650" as="sourcePoint"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="S7JaknvzryFcpf1w3_Vt-67" value="Contains" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="S7JaknvzryFcpf1w3_Vt-66" connectable="0" vertex="1">

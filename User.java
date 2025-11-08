@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-abstract class User extends Order {
+abstract class User {
     private int id;
     private ArrayList<String> orders = new ArrayList<>();
 
