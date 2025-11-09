@@ -1,0 +1,23 @@
+# Format: ItemName, Price
+
+# Burgers
+Classic Hamburger,        5.99
+Cheeseburger,             6.49
+Double Cheeseburger,      8.99
+Bacon Burger,             7.99
+Bacon Cheeseburger,       8.99
+Veggie Burger,            6.99
+
+# Fries
+Small Fries,              2.49
+Medium Fries,             3.49
+Large Fries,              4.49
+Curly Fries,              3.99
+
+# Drinks
+Small Soda,               1.99
+Medium Soda,              2.49
+Large Soda,               2.99
+Bottled Water,            1.49
+Milkshake,                4.99
+Iced Tea,                 2.29
