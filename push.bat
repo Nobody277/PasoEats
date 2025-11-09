@@ -5,7 +5,7 @@ echo Available branches:
 echo.
 git branch
 echo.
-set /p branch=Enter branch name to push to (1 or 2): 
+set /p branch=Enter branch name to push to: 
 echo.
 echo 1. Push with "update" message
 echo 2. Push with custom message
