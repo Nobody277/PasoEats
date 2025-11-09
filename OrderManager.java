@@ -119,7 +119,7 @@ public class OrderManager {
 
     /*
     Play by play for a customer placing an order:
-    Customer C1 places an order: placeOrder(C1, ["Item1", "Item2", "Item3"]) which triggers Orders.place(C1, items)
+    Customer C1 places an order: placeOrder(C1, ["Item1", "Item2", "Item3"]) which triggers OrderManager.place(C1, items)
     Which creates a new Order object with a random UUID for the ID (Oa) // Oa = a81bc81b-dead-4e5d-abff-90865d1e13b1
     customerId = C1.getId() // C1 = 123e4567-e89b-12d3-a456-426614174000
     status = Status.PLACED // PLACED = "PLACED"
