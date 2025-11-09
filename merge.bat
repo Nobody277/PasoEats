@@ -1,29 +1,21 @@
 @echo off
 cls
-echo Merging develop into main...
+echo Creating Pull Request from develop to main...
 echo.
 echo Checking if develop is up to date...
 git checkout develop
 git fetch origin develop
 git status -uno
 echo.
-set /p confirm=Have you pushed all changes to develop? (y/n): 
+set /p confirm=Is develop branch up to date? (y/n): 
 if /i not "%confirm%"=="y" (
-    echo Please push to develop first using push.bat
+    echo Push to develop first with push.bat
     pause
-    exit /b
 )
 echo.
-echo Switching to main...
-git checkout main
-git pull origin main
+set /p title=Enter PR title: 
+set /p description=Enter PR description: 
 echo.
-echo Merging develop into main...
-git merge develop
-echo.
-echo Pushing to main...
-git push origin main
-echo.
-echo Merge complete! Switching back to develop...
-git checkout develop
+echo Creating pull request...
+gh pr create --base main --head develop --title "%title%" --body "%description%"
 pause
