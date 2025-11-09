@@ -12,17 +12,46 @@ public class OrderManager {
         private String createdAt;
 
         public Order() {}
-        public Order(UUID id, UUID customerId, List<String> items) {}
+        public Order(UUID id, UUID customerId, List<String> items) {
+            this.id = id;
+            this.customerId = customerId;
+            this.items = items;
+            this.status = Status.PLACED;
+            this.assignedDriverId = null;
+            this.createdAt = new java.text.SimpleDateFormat("MM/dd/yyyy hh:mm a").format(new Date());
+        }
 
-        public UUID getId() { return this.id; }
-        public UUID getCustomerId() { return this.customerId; }
-        public List<String> getItems() { return this.items; }
-        public Status getStatus() { return this.status; }
-        public UUID getAssignedDriverId() { return this.assignedDriverId; }
-        public String getCreatedAt() { return this.createdAt; }
+        public UUID getId() { 
+            return this.id;
+        }
 
-        public void setStatus(Status status) {}
-        public void setAssignedDriverId(UUID driverId) {}
+        public UUID getCustomerId() { 
+            return this.customerId;
+        }
+
+        public List<String> getItems() { 
+            return this.items;
+        }
+
+        public Status getStatus() { 
+            return this.status;
+        }
+
+        public UUID getAssignedDriverId() { 
+            return this.assignedDriverId;
+        }
+
+        public String getCreatedAt() { 
+            return this.createdAt;
+        }
+
+        public void setStatus(Status status) {
+            this.status = status;
+        }
+
+        public void setAssignedDriverId(UUID driverId) {
+            this.assignedDriverId = driverId;
+        }
     }
 
     private final Map<UUID, Order> byId = new HashMap<>(); // Map to store orders by their ID
@@ -30,17 +59,67 @@ public class OrderManager {
 
     public OrderManager() {}
 
-    public Order place(UUID customerId, List<String> items) { return null; } // Customer places an order
+    public Order place(UUID customerId, List<String> items) {
+        if (customerId == null) {
+            throw new IllegalArgumentException("Customer ID can't be null");
+        }
+        if (items == null || items.isEmpty()) {
+            throw new IllegalArgumentException("Items list can't be null or empty");
+        }
+        Order order = new Order(UUID.randomUUID(), customerId, items);
+        byId.put(order.getId(), order);
+        intake.add(order.getId());
+        return order;
+    }
 
-    public Order acceptNext(UUID driverId) { return null; } // Driver accepts the next order
+    public Order acceptNext(UUID driverId) {
+        if (driverId == null) {
+            throw new IllegalArgumentException("Driver ID can't be null");
+        }
+        UUID nextOrderId = intake.poll();
+        if (nextOrderId == null) { // No orders check
+            return null;
+        }
+        Order order = byId.get(nextOrderId);
+        order.setAssignedDriverId(driverId);
+        order.setStatus(Status.ACCEPTED);
+        return order;
+    }
 
-    public void markStatus(UUID orderId, Status newStatus) {} // Mark the status of an order
+    public void markStatus(UUID orderId, Status newStatus) {
+        if (orderId == null) {
+            throw new IllegalArgumentException("Order ID can't be null");
+        }
+        if (newStatus == null) {
+            throw new IllegalArgumentException("Status can't be null");
+        }
+        Order order = byId.get(orderId);
+        if (order != null) {
+            order.setStatus(newStatus);
+        }
+    }
 
-    public Order get(UUID orderId) { return null; } // Get an order by its ID
+    public Order get(UUID orderId) {
+        if (orderId == null) {
+            throw new IllegalArgumentException("Order ID can't be null");
+        }
+        return byId.get(orderId);
+    }
+
+    public static void main(String[] args) {
+        OrderManager manager = new OrderManager();
+        UUID customerId = UUID.randomUUID();
+        List<String> items = Arrays.asList("Item1", "Item2", "Item3");
+        Order order = manager.place(customerId, items);
+        System.out.println("Order placed: " + order.getId());
+        UUID driverId = UUID.randomUUID();
+        Order acceptedOrder = manager.acceptNext(driverId);
+        System.out.println("Order accepted: " + acceptedOrder.getId());
+    }
 
     /*
     Play by play for a customer placing an order:
-    Customer C1 places an order: placeOrder(C1, ["Item1", "Item2", "Item3"]) which triggers OrderManager.place(C1, items)
+    Customer C1 places an order: placeOrder(C1, ["Item1", "Item2", "Item3"]) which triggers Orders.place(C1, items)
     Which creates a new Order object with a random UUID for the ID (Oa) // Oa = a81bc81b-dead-4e5d-abff-90865d1e13b1
     customerId = C1.getId() // C1 = 123e4567-e89b-12d3-a456-426614174000
     status = Status.PLACED // PLACED = "PLACED"
