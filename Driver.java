@@ -56,10 +56,8 @@ public class Driver extends User {
         //TODO
     }
     public void addRating(int newRating){
-        if(rateCounter == 9){ // when ratings is full 
-            rateCounter = 0; // reset counter
-        }
-        ratings[rateCounter] = newRating; // replace oldest ratings 
+        ratings[rateCounter] = newRating;
+        rateCounter = (rateCounter + 1) % ratings.length;
         calcAvgRating();
     }
 }
