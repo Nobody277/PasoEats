@@ -3,11 +3,11 @@ import java.util.UUID;
 
 abstract class User {
     // variables
-    private UUID id;
-    private String name;
-    private String username;
-    private String email;
-    private ArrayList<String> orders;
+    protected UUID id;
+    protected String name;
+    protected String username;
+    protected String email;
+    protected ArrayList<String> orders;
    
     // constructors
     public User(){
