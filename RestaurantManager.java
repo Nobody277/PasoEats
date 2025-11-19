@@ -1,54 +1,133 @@
+import java.io.*;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class RestaurantManager {
-    private final UUID restaurantId;
-    private String name;
-    private String category;
+    private static final String RESTAURANTS_FILE = "restaurants.txt";
+    private ArrayList<Restaurant> restaurants;
+    private int nextIdNumber;
 
-    public RestaurantManager(String name, String category) {
-        this.restaurantId = UUID.randomUUID();
-        this.name = name;
-        this.category = category;
+    public RestaurantManager() {
+        this.restaurants = new ArrayList<>();
+        loadRestaurantsFromFile();
     }
 
-    public UUID getRestaurantId() {
-        return restaurantId;
+    /**
+     * Loads all restaurants from the file into memory
+     */
+    private void loadRestaurantsFromFile() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(RESTAURANTS_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                Restaurant restaurant = Restaurant.createFromFileLine(line);
+                if (restaurant != null) {
+                    restaurants.add(restaurant);
+                    
+                    // Track highest ID number for generating new IDs
+                    String id = restaurant.getRestaurantId();
+                    if (id.startsWith("UUID")) {
+                        try {
+                            int idNum = Integer.parseInt(id.substring(4));
+                            if (idNum >= nextIdNumber) {
+                                nextIdNumber = idNum + 1;
+                            }
+                        } catch (NumberFormatException e) {
+                            // Skip if ID format is unexpected
+                        }
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Restaurants file not found. Starting fresh.");
+        } catch (IOException e) {
+            System.err.println("Error loading restaurants: " + e.getMessage());
+        }
     }
 
-    public String getName() {
-        return name;
+    /**
+     * Saves all restaurants back to the file
+     */
+    private boolean saveRestaurantsToFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(RESTAURANTS_FILE))) {
+            writer.write("# Format: RestaurantId, Name, Category\n");
+            for (Restaurant restaurant : restaurants) {
+                writer.write(restaurant.toFileFormat() + "\n");
+            }
+            return true;
+        } catch (IOException e) {
+            System.err.println("Error saving restaurants: " + e.getMessage());
+            return false;
+        }
     }
 
-    public void setName(String name) {
-        this.name = name;
+    /**
+     * Generates a new unique restaurant ID
+     */
+    private String generateRestaurantId() {
+        return UUID.randomUUID().toString();
     }
 
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
+    public ArrayList<Restaurant> getRestaurants() {
+        return new ArrayList<>(restaurants); // Return copy to prevent external modification
     }
 
     public boolean addRestaurant(String name, String category) {
-        // TODO
+        if (name == null || name.trim().isEmpty() || category == null || category.trim().isEmpty()) {
+            return false;
+        }
+
+        String newId = generateRestaurantId();
+        Restaurant newRestaurant = new Restaurant(newId, name.trim(), category.trim());
+        restaurants.add(newRestaurant);
+        
+        return saveRestaurantsToFile();
+    }
+
+    public boolean removeRestaurant(String restaurantId) {
+        Restaurant toRemove = null;
+        for (Restaurant restaurant : restaurants) {
+            if (restaurant.getRestaurantId().equals(restaurantId)) {
+                toRemove = restaurant;
+                break;
+            }
+        }
+        
+        if (toRemove != null) {
+            restaurants.remove(toRemove);
+            return saveRestaurantsToFile();
+        }
+        
         return false;
     }
 
-    public boolean deleteRestaurant(UUID restaurantId) {
-        // TODO
-        return false;
+    public Restaurant findRestaurantById(String restaurantId) {
+        for (Restaurant restaurant : restaurants) {
+            if (restaurant.getRestaurantId().equals(restaurantId)) {
+                return restaurant;
+            }
+        }
+        return null;
     }
 
-    public String modifyRestaurantMenuItem(UUID restaurantId, UUID item) {
+    public String modifyRestaurantMenuItem(UUID itemId) {
         // TODO
+        // creates a new MenuItem object
+        // adds it to the menuItems.txt file 
+        // adds it to the restaurant's menu (or updates the menu from the file)        
         return null;
     }
 
     public String getAllRestaurantsString() {
-        // TODO
-        return null;
+        if (restaurants.isEmpty()) {
+            return "No restaurants available.";
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== All Restaurants ===\n");
+        for (Restaurant restaurant : restaurants) {
+            sb.append(restaurant.toString()).append("\n");
+        }
+        return sb.toString();
     }
 
 }
