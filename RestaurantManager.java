@@ -22,23 +22,10 @@ public class RestaurantManager {
                 Restaurant restaurant = Restaurant.createFromFileLine(line);
                 if (restaurant != null) {
                     restaurants.add(restaurant);
-                    
-                    // Track highest ID number for generating new IDs
-                    String id = restaurant.getRestaurantId();
-                    if (id.startsWith("UUID")) {
-                        try {
-                            int idNum = Integer.parseInt(id.substring(4));
-                            if (idNum >= nextIdNumber) {
-                                nextIdNumber = idNum + 1;
-                            }
-                        } catch (NumberFormatException e) {
-                            // Skip if ID format is unexpected
-                        }
-                    }
                 }
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Restaurants file not found. Starting fresh.");
+            System.out.println("Restaurants file not found.");
         } catch (IOException e) {
             System.err.println("Error loading restaurants: " + e.getMessage());
         }
@@ -125,7 +112,7 @@ public class RestaurantManager {
         StringBuilder sb = new StringBuilder();
         sb.append("=== All Restaurants ===\n");
         for (Restaurant restaurant : restaurants) {
-            sb.append(restaurant.toString()).append("\n");
+            sb.append(restaurant.detailsToString()).append("\n");
         }
         return sb.toString();
     }

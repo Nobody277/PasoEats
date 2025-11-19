@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class Restaurant {
     private String restaurantId;
@@ -12,6 +11,7 @@ public class Restaurant {
         this.name = name;
         this.category = category;
         this.menuItems = new ArrayList<>();
+
     }
 
     public String getRestaurantId() {
@@ -57,7 +57,12 @@ public class Restaurant {
         );
     }
 
-    public String RestaurantToString() {
+    public String detailsToString() {
         return String.format("%s - %s (%s)", restaurantId, name, category);
+    }
+
+    public ArrayList<MenuItem> loadMenuItemsFromFile() {
+        // TODO, load menu items associated with this restaurant from file
+        return null;
     }
 }
