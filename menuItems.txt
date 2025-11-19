@@ -1,23 +1,20 @@
-# Format: ItemName, Price
+# Format: ItemId, Name, Category, Price, RestaurantId
 
-# Burgers
-Classic Hamburger,        5.99
-Cheeseburger,             6.49
-Double Cheeseburger,      8.99
-Bacon Burger,             7.99
-Bacon Cheeseburger,       8.99
-Veggie Burger,            6.99
-
-# Fries
-Small Fries,              2.49
-Medium Fries,             3.49
-Large Fries,              4.49
-Curly Fries,              3.99
-
-# Drinks
-Small Soda,               1.99
-Medium Soda,              2.49
-Large Soda,               2.99
-Bottled Water,            1.49
-Milkshake,                4.99
-Iced Tea,                 2.29
+UUID00001, Classic Hamburger, Burgers, 5.99, 000000001
+UUID00002, Cheeseburger, Burgers, 6.49, 000000001
+UUID00003, Double Cheeseburger, Burgers, 8.99, 000000001
+UUID00004, Bacon Burger, Burgers, 7.99, 000000001
+UUID00005, Bacon Cheeseburger, Burgers, 8.99, 000000001
+UUID00006, Veggie Burger, Burgers, 6.99, 000000001
+UUID00007, Small Fries, Fries, 2.49, 000000001
+UUID00008, Medium Fries, Fries, 3.49, 000000001
+UUID00009, Large Fries, Fries, 4.49, 000000001
+UUID00010, Curly Fries, Fries, 3.99, 000000001
+UUID00011, Small Soda, Drinks, 1.99, 000000001
+UUID00012, Medium Soda, Drinks, 2.49, 000000001
+UUID00013, Large Soda, Drinks, 2.99, 000000001
+UUID00014, Bottled Water, Drinks, 1.49, 000000001
+UUID00015, Milkshake, Drinks, 4.99, 000000001
+UUID00016, Iced Tea, Drinks, 2.29, 000000001
+UUID00017, Coffee, Drinks, 2.99, 000000002
+UUID00018, Hot Chocolate, Drinks, 3.4, 000000002
