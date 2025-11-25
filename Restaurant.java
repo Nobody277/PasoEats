@@ -10,7 +10,7 @@ public class Restaurant {
         this.restaurantId = restaurantId;
         this.name = name;
         this.category = category;
-        this.menuItems = new ArrayList<>();
+        this.menuItems = new ArrayList<>(); // HashMap
 
     }
 

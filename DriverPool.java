@@ -7,11 +7,11 @@ public class DriverPool {
         this.driverPool = new PriorityQueue<>();
     }
 
-    public boolean addDriver(Driver driver) { // TODO, lets talk about ratings
+    public boolean addDriver(Driver driver) {
         return driverPool.offer(driver);
     }
 
-    public boolean removeDriver(Driver driver) {// TODO, lets talk about ratings
+    public boolean removeDriver(Driver driver) {
         return driverPool.remove(driver);
     }
 
@@ -19,8 +19,7 @@ public class DriverPool {
         return driverPool.poll();
     }
 
-    public boolean completeDelivery(Driver driver, double rating) {// TODO, lets talk about ratings
-        return driverPool.offer(driver);
+    public boolean completeDelivery(Driver driver, double rating) {// TODO, add rating set with driver method
     }
 
     public int getPoolSize() {
@@ -29,10 +28,5 @@ public class DriverPool {
 
     public boolean isEmpty() {
         return driverPool.isEmpty();
-    }
-
-    public boolean updatePool() {
-        // TODO, not sure what is intended here. Lets chat about it
-        return false;
     }
 }

@@ -1,5 +1,4 @@
 # Format: ItemId, Name, Category, Price, RestaurantId
-
 UUID00001, Classic Hamburger, Burgers, 5.99, 000000001
 UUID00002, Cheeseburger, Burgers, 6.49, 000000001
 UUID00003, Double Cheeseburger, Burgers, 8.99, 000000001

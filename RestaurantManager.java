@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class RestaurantManager {
     private static final String RESTAURANTS_FILE = "restaurants.txt";
-    private ArrayList<Restaurant> restaurants;
+    private ArrayList<Restaurant> restaurants; //HashMap
     private int nextIdNumber;
 
     public RestaurantManager() {
@@ -36,7 +36,7 @@ public class RestaurantManager {
      */
     private boolean saveRestaurantsToFile() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(RESTAURANTS_FILE))) {
-            writer.write("# Format: RestaurantId, Name, Category\n");
+            writer.write("# Format: RestaurantId, Name, Category\n"); // header
             for (Restaurant restaurant : restaurants) {
                 writer.write(restaurant.toFileFormat() + "\n");
             }
