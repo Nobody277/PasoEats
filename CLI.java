@@ -6,7 +6,7 @@ public class CLI {
     // variables
     private Scanner scanner;
     //private UserManager userManager;
-    //private RestaurantManager restaurantManager;
+    private RestaurantManager restaurantManager;
     //private OrderManager orderManager;
     private FileManager fileManager;
     private UUID currentUserID;
@@ -14,10 +14,10 @@ public class CLI {
     // constructor
     public CLI(){
         scanner = new Scanner(System.in);
-        //userManager = new UserManager();
-        //restaurantManager = new RestaurantManager();
-        //orderManager = new OrderManager();
         fileManager = new FileManager();
+        //userManager = new UserManager();
+        restaurantManager = new RestaurantManager(fileManager);
+        //orderManager = new OrderManager();
     }
 
     // start app

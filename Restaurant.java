@@ -2,29 +2,27 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public class Restaurant {
-    private String restaurantId;
+    private UUID restaurantId;
     private String name;
     private String category;
-    private ArrayList<MenuItem> menuItems;
 
     /**
      * Constructor for Restaurant class
-     * @param restaurantId
+     * @param restaurantId UUID
      * @param name
      * @param category
      */
-    public Restaurant(String restaurantId, String name, String category) {
+    public Restaurant(UUID restaurantId, String name, String category) {
         this.restaurantId = restaurantId;
         this.name = name;
         this.category = category;
-        this.menuItems = new ArrayList<>(); // HashMap
     }
 
     /**
      * Gets the restaurant ID
-     * @return String
+     * @return UUID
      */
-    public String getRestaurantId() {
+    public UUID getRestaurantId() {
         return restaurantId;
     }
 
@@ -45,28 +43,12 @@ public class Restaurant {
     }
 
     /**
-     * Gets the menu items for the restaurant
+     * Gets the menu items for the restaurant from the file manager
      * @return ArrayList<MenuItem>
      */
     public ArrayList<MenuItem> getMenuItems(){
-        return menuItems;
-    }
-
-    /**
-     * Gets a string representation of all menu items, seperated by new lines
-     * @return String
-     */
-    public String getMenuItemsToString(){
-        if (menuItems.isEmpty()) {
-            return "No menu items available.";
-        }
-        
-        StringBuilder sb = new StringBuilder();
-        sb.append("=== All Menu Items ===\n");
-        for (MenuItem menuItem : menuItems) {
-            sb.append(menuItem.detailsToString()).append("\n");
-        }
-        return sb.toString();
+        //todo, broken!!
+        return new ArrayList<>();
     }
 
     /**
@@ -86,43 +68,10 @@ public class Restaurant {
     }
 
     /**
-     * Convert to file format
+     * Returns a formatted string with restaurant details
      * @return String
      */
-    public String toFileFormat() {
-        return restaurantId + ", " + name + ", " + category;
-    }
-
-    /* 
-    // Parse from file line
-    public static Restaurant createFromFileLine(String line) {
-        if (line == null || line.trim().isEmpty() || line.startsWith("#")) {
-            return null;
-        }
-        
-        String[] parts = line.split(",");
-        if (parts.length != 3) {
-            return null;
-        }
-        
-        return new Restaurant(
-            parts[0].trim(),
-            parts[1].trim(),
-            parts[2].trim()
-        );
-    }
-    
-
-
     public String detailsToString() {
-        return String.format("%s - %s (%s)", restaurantId, name, category);
-    }
-    */
-
-
-    public ArrayList<MenuItem> loadMenuItemsFromFile() {
-        // TODO, load menu items associated with this restaurant from file
-        // call the file manager
-        return null;
+        return String.format("%s - %s (%s)", restaurantId.toString(), name, category);
     }
 }
