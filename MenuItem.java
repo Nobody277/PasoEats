@@ -71,5 +71,9 @@ public class MenuItem {
         // TODO
         return false;
     }
+
+    public String detailsToString() {
+        return String.format("%s - %s (%s)", itemId, name, price);
+    }
     
 }

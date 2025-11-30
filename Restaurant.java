@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Restaurant {
     private String restaurantId;
@@ -8,6 +9,12 @@ public class Restaurant {
 
     public Restaurant(String restaurantId, String name, String category) {
         this.restaurantId = restaurantId;
+        this.name = name;
+        this.category = category;
+        this.menuItems = new ArrayList<>(); // HashMap
+    }
+    public Restaurant(UUID restaurantId, String name, String category) {
+        this.restaurantId = restaurantId.toString();
         this.name = name;
         this.category = category;
         this.menuItems = new ArrayList<>(); // HashMap
@@ -24,6 +31,23 @@ public class Restaurant {
 
     public String getCategory() {
         return category;
+    }
+
+    public ArrayList<MenuItem> getMenuItems(){
+        return menuItems;
+    }
+
+    public String getMenuItemsToString(){
+        if (menuItems.isEmpty()) {
+            return "No menu items available.";
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== All Menu Items ===\n");
+        for (MenuItem menuItem : menuItems) {
+            sb.append(menuItem.detailsToString()).append("\n");
+        }
+        return sb.toString();
     }
 
     public void setName(String name) {
