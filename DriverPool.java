@@ -26,8 +26,9 @@ public class DriverPool {
      * @param driver
      */
     public void removeDriver(Driver driver) {
-        driver.setAvailable(false);
         this.driverPool.remove(driver);
+        driver.setAvailable(false);
+        // consider feedback for unavailable drivers
     }
 
     /**
@@ -41,9 +42,8 @@ public class DriverPool {
     }
 
     /**
-     * Completes the delivery for a driver
+     * Completes the delivery for a driver and re-adds them to the pool
      * @param driver
-     * @param rating
      */
     public void completeDelivery(Driver driver) {
         this.addDriver(driver); // re-add driver to the pool
