@@ -22,7 +22,7 @@ public class DriverPool {
     }
 
     /**
-     * Removes a driver from the pool
+     * Removes a driver from the pool and sets them to unavailable
      * @param driver
      */
     public void removeDriver(Driver driver) {
@@ -31,11 +31,13 @@ public class DriverPool {
     }
 
     /**
-     * Retrieves and removes the next available driver from the pool
+     * Gets the next available driver from the pool and sets them to unavailable
      * @return Driver
      */
     public Driver getNextAvailableDriver() {
-        return driverPool.poll();
+        Driver driver = this.driverPool.poll();
+        driver.setAvailable(false);
+        return driver;
     }
 
     /**
