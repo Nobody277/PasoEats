@@ -80,11 +80,11 @@ public class CLI {
                         System.out.println("\n\u001B[31mID: " + tempID + " not found.\u001B[0m");
                         waitForEnter();
                     }
-                    printDriverMenu();
                     break;
                 }
                 catch(Exception e){
                     System.out.println("Illegal Entry. Exception Caught.");
+                    break;
                 }
                 
             case 3: 
@@ -94,17 +94,17 @@ public class CLI {
                     // if driver is found, continue
                     if(administrator != null){
                         currentUserID = UUID.fromString(tempID);
-                        printDriverMenu();
+                        printAdministratorMenu();
                     }
                     else{ 
                         System.out.println("\n\u001B[31mID: " + tempID + " not found.\u001B[0m");
                         waitForEnter();
                     }
-                    printAdministratorMenu();
                     break;
                 }
                 catch(Exception e){
                     System.out.println("Illegal Entry. Exception Caught.");
+                    break;
                 }
             case 4: 
                 printShutDown();
