@@ -66,4 +66,30 @@ public class RestaurantManager {
         // adds it to the restaurant's menu (or updates the menu from the file)        
         return null;
     }
+
+    /**
+     * Gets a formatted string of all restaurants
+     * @return Formatted string of all restaurants
+     */
+    public String getAllRestaurantsString() {
+        List<Restaurant> restaurants = fileManager.getAllRestaurants();
+        if (restaurants.isEmpty()) {
+            return "No restaurants available.";
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== All Restaurants ===\n");
+        for (Restaurant restaurant : restaurants) {
+            sb.append(restaurant.detailsToString()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Gets the FileManager instance (for Restaurant to access menu items)
+     * @return FileManager
+     */
+    public FileManager getFileManager() {
+        return fileManager;
+    }
 }

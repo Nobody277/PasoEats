@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Restaurant {
@@ -43,12 +43,32 @@ public class Restaurant {
     }
 
     /**
-     * Gets the menu items for the restaurant from the file manager
-     * @return ArrayList<MenuItem>
+     * Gets the menu items for this restaurant from FileManager
+     * @param fileManager The FileManager instance to query
+     * @return List of MenuItems for this restaurant
      */
-    public ArrayList<MenuItem> getMenuItems(){
-        //todo, broken!!
-        return new ArrayList<>();
+    public List<MenuItem> getMenuItems(FileManager fileManager) {
+        return fileManager.getMenuItemsForRestaurant(this.restaurantId);
+    }
+
+    /**
+     * Gets a string representation of all menu items for this restaurant
+     * @param fileManager The FileManager instance to query
+     * @return String with all menu items
+     */
+    public String getMenuItemsToString(FileManager fileManager) {
+        List<MenuItem> menuItems = fileManager.getMenuItemsForRestaurant(this.restaurantId);
+        
+        if (menuItems.isEmpty()) {
+            return "No menu items available.";
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("=== Menu Items for ").append(name).append(" ===\n");
+        for (MenuItem menuItem : menuItems) {
+            sb.append(menuItem.detailsToString()).append("\n");
+        }
+        return sb.toString();
     }
 
     /**
@@ -65,6 +85,14 @@ public class Restaurant {
      */
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    /**
+     * Convert to file format
+     * @return String
+     */
+    public String toFileFormat() {
+        return restaurantId.toString() + ", " + name + ", " + category;
     }
 
     /**

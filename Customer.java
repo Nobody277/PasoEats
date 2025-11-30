@@ -11,8 +11,9 @@ public class Customer extends User {
     public String getRestraunts(RestaurantManager restaurantManager){
         return restaurantManager.getAllRestaurantsString();
     }
-    public String getMenu(Restaurant restaurant){
-        return restaurant.getMenuItemsToString();
+    public String getMenu(RestaurantManager restaurantManager, UUID restaurantId){
+        Restaurant restaurant = restaurantManager.findRestaurantById(restaurantId);
+        return restaurant.getMenuItemsToString(restaurantManager.getFileManager());
     }
     public void placeOrder(OrderManager orderManager, List<String> items){
         orderManager.place(id, items);
