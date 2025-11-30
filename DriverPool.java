@@ -41,12 +41,11 @@ public class DriverPool {
     }
 
     /**
-     * Completes the delivery for a driver and updates their rating
+     * Completes the delivery for a driver
      * @param driver
      * @param rating
      */
-    public void completeDelivery(Driver driver, int rating) {
-        driver.addRating(rating);
+    public void completeDelivery(Driver driver) {
         this.addDriver(driver); // re-add driver to the pool
     }
 
