@@ -13,9 +13,17 @@ public class Restaurant {
      * @param category
      */
     public Restaurant(UUID restaurantId, String name, String category) {
+        this.setRestaurantId(restaurantId);
+        this.setName(name);
+        this.setCategory(category);
+    }
+
+    /**
+     * Sets the restaurant ID
+     * @param restaurantId UUID
+     */
+    public void setRestaurantId(UUID restaurantId) {
         this.restaurantId = restaurantId;
-        this.name = name;
-        this.category = category;
     }
 
     /**
@@ -40,6 +48,22 @@ public class Restaurant {
      */
     public String getCategory() {
         return category;
+    }
+
+    /**
+     * Sets the restaurant name
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Sets the restaurant category
+     * @param category
+     */
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     /**
@@ -69,22 +93,6 @@ public class Restaurant {
             sb.append(menuItem.detailsToString()).append("\n");
         }
         return sb.toString();
-    }
-
-    /**
-     * Sets the restaurant name
-     * @param name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Sets the restaurant category
-     * @param category
-     */
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     /**
