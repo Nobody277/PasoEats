@@ -71,29 +71,27 @@ public class DriverPool {
     }
 
     /**
+     * Clears the driver pool
+     */
+    public void clearPool() {
+        driverPool.clear();
+    }  
+
+    /**
      * Clears and updates the driver pool using FileManager
      * @param fileManager
      */
     public void clearAndUpdatePool(FileManager fileManager) {
-        driverPool.clear();
-
-        // Re-populate the pool with available drivers from FM
-        Map<UUID, Driver> drivers = fileManager.getAllDrivers();
-        if (drivers != null) {
-            for (Driver driver : drivers.values()) {
-                if (driver.isAvailable()) {
-                    this.addDriver(driver);
-                }
-            }
-        }
+        this.clearPool();
+        this.updatePoolDrivers(fileManager);
     }
 
     /**
      * Updates the driver pool with newly available drivers using FileManager
      * @param fileManager
      */
-    public void updatePoolWithAvailableDrivers(FileManager fileManager) {
-        // Add newly available drivers from FM
+    public void updatePoolDrivers(FileManager fileManager) {
+        // Add available drivers from FM
         Map<UUID, Driver> drivers = fileManager.getAllDrivers();
         if (drivers != null) {
             for (Driver driver : drivers.values()) {
