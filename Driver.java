@@ -12,8 +12,8 @@ public class Driver extends User {
     public Driver(UUID id, String name, String username, String email){
         super(id, name, username, email);
         ratings = new int[10];
-        for(int rating : ratings){
-            rating = -1; // set empty ratings to -1
+        for(int i = 0; i < ratings.length; i++){
+            ratings[i] = -1; // set empty ratings to -1
         }
         rateCounter = 0;
         avgRating = 0;
@@ -67,7 +67,7 @@ public class Driver extends User {
                 counter++; // increment counter
             }
         }
-        avgRating = (temp / counter); // average is the sum of ratings divided by number of ratings
+        avgRating = (counter > 0) ? (temp / counter) : 0.0; // average is the sum of ratings divided by number of ratings
     }
     public void addRating(int newRating){
         ratings[rateCounter] = newRating;
