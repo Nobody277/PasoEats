@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public class DriverPool {
     private PriorityQueue<Driver> driverPool;
-    private FileManager fileManager;
+    private final FileManager fileManager;
 
     /**
      * Constructor for DriverPool class

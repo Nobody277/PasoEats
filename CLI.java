@@ -1,36 +1,40 @@
 import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.util.UUID;
 
-public class CLI {
-    // variables
+/**
+ * Command Line Interface implementation of the PasoEats application.
+ * Extends AppController to use core business logic.
+ */
+public class CLI extends AppController {
+    // CLI-specific variables
     private Scanner scanner;
-    //private UserManager userManager;
-    private RestaurantManager restaurantManager;
-    //private OrderManager orderManager;
-    private FileManager fileManager;
-    private UUID currentUserID;
 
     // constructor
     public CLI(){
+        super(); // Initialize AppController (managers, etc.)
         scanner = new Scanner(System.in);
-        fileManager = new FileManager();
-        //userManager = new UserManager();
-        restaurantManager = new RestaurantManager(fileManager);
-        //orderManager = new OrderManager();
     }
 
     // start app
+    @Override
     public void start(){
-        printWelome();
+        printWelcome();
         printLogin();
     }
 
+    @Override
+    public void shutdown() {
+        System.out.println("Goodbye");
+        System.out.println("Shutting Down...");
+        scanner.close();
+    }
+
     // print messages
-    public void printWelome(){
+    public void printWelcome(){
         System.out.println("CS 233 Paso Eats Project");
         System.out.println("Welcome!");
     }
+
     public void printLogin(){
         System.out.println("Role Menu");
         System.out.println("    1. Customer");
@@ -40,8 +44,8 @@ public class CLI {
         
         //logic start
         loginLogic(readIntInput("Please Choose an Option (1-4) \n"));
-
     }
+
     // login logic
     public void loginLogic(int input){
         boolean running = true;
@@ -51,10 +55,8 @@ public class CLI {
             case 1: 
                 try{
                     tempID = readStringInput("Please Enter Your Customer ID \n");
-                    Customer customer = fileManager.getCustomer(UUID.fromString(tempID));
-                    // if customer is found, continue
+                    Customer customer = loginCustomer(tempID);
                     if(customer != null){
-                        currentUserID = UUID.fromString(tempID);
                         printCustomerMenu();
                     }
                     else{ 
@@ -70,10 +72,8 @@ public class CLI {
             case 2:
                 try{
                     tempID = readStringInput("Please Enter Your Driver ID \n");
-                    Driver driver = fileManager.getDriver(UUID.fromString(tempID));
-                    // if driver is found, continue
+                    Driver driver = loginDriver(tempID);
                     if(driver != null){
-                        currentUserID = UUID.fromString(tempID);
                         printDriverMenu();
                     }
                     else{ 
@@ -90,10 +90,8 @@ public class CLI {
             case 3: 
                 try{
                     tempID = readStringInput("Please Enter Your Administrator ID \n");
-                    Administrator administrator = fileManager.getAdmin(UUID.fromString(tempID));
-                    // if driver is found, continue
+                    Administrator administrator = loginAdministrator(tempID);
                     if(administrator != null){
-                        currentUserID = UUID.fromString(tempID);
                         printAdministratorMenu();
                     }
                     else{ 
@@ -107,21 +105,14 @@ public class CLI {
                     break;
                 }
             case 4: 
-                printShutDown();
+                shutdown();
                 running = false;
-                scanner.close();
                 break;
             default:
                 System.out.println("\n\u001B[31mInvalid choice. Please enter a number between 1 and 4.\u001B[0m");
                 waitForEnter();
             }
         }
-    }
-
-
-    public void printShutDown(){
-        System.out.println("Goodbye");
-        System.out.println("Shutting Down...");
     }
 
     // prints for customer
