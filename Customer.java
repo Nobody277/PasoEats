@@ -19,7 +19,10 @@ public class Customer extends User {
         orderManager.place(id, items);
     }
     public void rateDriver(OrderManager orderManager, UserManager userManager, int rating){
-        OrderManager.Order order = orderManager.get(orders.get(orders.size())); // get most recent order
+        if (orders.isEmpty()) {
+            return; // No orders to rate
+        }
+        OrderManager.Order order = orderManager.get(orders.get(orders.size() - 1)); // get most recent order
         UUID driverID = order.getAssignedDriverId(); // find most recent driver
         Driver driver = userManager.getDriver(driverID); 
         driver.addRating(rating); // add rating

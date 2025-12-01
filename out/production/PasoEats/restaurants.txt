@@ -1,0 +1,4 @@
+# Format: RestaurantId, Name, Category
+UUID00100, Burgers N Stuff, Diner
+UUID00101, Coffee Star, Coffee Shop
+UUID00102, Top Roast Coffee, Coffee Shop
