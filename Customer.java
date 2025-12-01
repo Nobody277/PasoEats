@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.UUID;
 
 public class Customer extends User {
@@ -7,16 +8,20 @@ public class Customer extends User {
     }
 
     // methods
-    public void getRestraunts(){
-        //TODO
+    public String getRestraunts(RestaurantManager restaurantManager){
+        return restaurantManager.getAllRestaurantsString();
     }
-    public void getMenu(String restaurant){
-        //TODO
+    public String getMenu(RestaurantManager restaurantManager, UUID restaurantId){
+        Restaurant restaurant = restaurantManager.findRestaurantById(restaurantId);
+        return restaurant.getMenuItemsToString(restaurantManager.getFileManager());
     }
-    public void placeOrder(){
-        //TODO
+    public void placeOrder(OrderManager orderManager, List<String> items){
+        orderManager.place(id, items);
     }
-    public void rateDriver(double rating){
-        //TODO
+    public void rateDriver(OrderManager orderManager, UserManager userManager, int rating){
+        OrderManager.Order order = orderManager.get(orders.get(orders.size())); // get most recent order
+        UUID driverID = order.getAssignedDriverId(); // find most recent driver
+        Driver driver = userManager.getDriver(driverID); 
+        driver.addRating(rating); // add rating
     }
 }

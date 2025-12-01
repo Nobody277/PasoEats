@@ -7,7 +7,7 @@ abstract class User {
     protected String name;
     protected String username;
     protected String email;
-    protected ArrayList<String> orders;
+    protected ArrayList<UUID> orders;
    
     // constructors
     public User(){
@@ -47,22 +47,13 @@ abstract class User {
     public void setEmail(String email) {
         this.email = email;
     }
-    public ArrayList<String> getOrders() {
+    public ArrayList<UUID> getOrders() {
         return orders;
     }
-    public void setOrders(ArrayList<String> orders) {
+    public void setOrders(ArrayList<UUID> orders) {
         this.orders = orders;
     }
-
+    public void addOrder(UUID orderID){
+        orders.add(orderID);
+    }
 }
-
-// User -> getRestraunts -> View Menus -> Select what they want -> Place Order -> Order Created -> Sent to Driver -> Order Status display [Accepted, in-progress, Picked Up, Delivered] -> User Notified -> Order History Updated -> User/driver can view past orders
-// Order Statuses: Will be controlled by Order and Driver classes.
-
-// Login Page : 1
-// Admin : 2
-//  Restaurants:
-//      Mcdonalds : 1
-//      Taco Bell : 2
-//      Burger King : 3
-// Customer : 3

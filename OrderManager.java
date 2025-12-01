@@ -106,6 +106,10 @@ public class OrderManager {
         return byId.get(orderId);
     }
 
+    public Map<UUID, Order> getAllOrders(){
+        return byId;
+    }
+
     public static void main(String[] args) {
         OrderManager manager = new OrderManager();
         UUID customerId = UUID.randomUUID();
