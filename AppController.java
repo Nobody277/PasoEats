@@ -223,15 +223,15 @@ public abstract class AppController {
     }
 
     /**
-     * Adds a new customer (admin only)
+     * Adds a new customer with random UUID(admin only)
      * @param name Customer name
      * @return true if successful
      */
-    public boolean addCustomer(String name) {
+    public boolean addCustomer(String name, String username, String email) {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return getFileManager().addCustomer(name);
+        return getFileManager().addCustomer(UUID.randomUUID(), name, username, email);
     }
 
     /**
@@ -252,24 +252,24 @@ public abstract class AppController {
      * @param newName New name
      * @return true if successful
      */
-    public boolean updateCustomerName(UUID customerId, String newName) {
+    public boolean updateCustomerDetails(UUID customerId, String newName, String newUsername, String newEmail) {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return getFileManager().updateCustomerName(customerId, newName);
+        return getFileManager().updateCustomerDetails(customerId, newName, newUsername, newEmail); //TODO: this is not implemented yet in FileManager
     }
 
     // ==================== Driver Operations ====================
     /**
-     * Adds a new driver (admin only)
+     * Adds a new driver as available (admin only)
      * @param name Driver name
      * @return true if successful
      */
-    public boolean addDriver(String name) {
+    public boolean addNewDriver(String name, String username, String email) {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return getFileManager().addDriver(name);
+        return getFileManager().addDriver(UUID.randomUUID(), name, username, email, true);
     }
 
     /**
@@ -290,25 +290,25 @@ public abstract class AppController {
      * @param newName New name
      * @return true if successful
      */
-    public boolean updateDriverDetails(UUID driverId, String newName) {
+    public boolean updateDriverDetails(UUID driverId, String newUsername, String newName, String newEmail) {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return getFileManager().updateDriverName(driverId, newName);
+        return getFileManager().updateDriverDetails(driverId, newUsername, newName, newEmail);//TODO: this is not implemented yet in FileManager
     }
 
     // ==================== Administrator Operations ====================
 
     /**
-     * Adds a new administrator (admin only)
+     * Adds a new administrator with random UUID (admin only)
      * @param name Administrator name
      * @return true if successful
      */
-    public boolean addAdministrator(String name) {
+    public boolean addAdministrator(String username, String name, String email) {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return getFileManager().addAdministrator(name);
+        return getFileManager().addAdmin(UUID.randomUUID(), username, name, email);
     }
 
     /**
@@ -321,7 +321,7 @@ public abstract class AppController {
             return false;
         }
 
-        return getFileManager().removeAdministrator(adminId);
+        return getFileManager().removeAdmin(adminId);
     }
 
     /**
@@ -330,12 +330,12 @@ public abstract class AppController {
      * @param available
      * @return
      */
-    public boolean updateAdministratorDetails(UUID adminId, String newName) {
+    public boolean updateAdministratorDetails(UUID adminId, String newUsername, String newName, String newEmail) {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
 
-        return getFileManager().updateAdministratorName(adminId, newName);
+        return getFileManager().updateAdministratorDetails(adminId, newUsername, newName, newEmail);//TODO: this is not implemented yet in FileManager
     }
     
     // ==================== Driver Operations ====================
