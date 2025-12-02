@@ -27,6 +27,7 @@ public class CLI extends AppController {
         System.out.println("Goodbye");
         System.out.println("Shutting Down...");
         scanner.close();
+        System.exit(0);
     }
 
     // print messages
@@ -172,8 +173,7 @@ public class CLI extends AppController {
                 }
             case 3: // Shut Down
                 shutdown();
-                running = false;
-                break;
+                return;
             default:
                 System.out.println("\n\u001B[31mInvalid choice. Please enter a number between 1 and 3.\u001B[0m");
                 waitForEnter();
