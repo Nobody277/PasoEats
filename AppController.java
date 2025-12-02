@@ -1,6 +1,7 @@
 import java.util.List;
 import java.util.UUID;
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * Abstract base class that handles core application logic and state.
@@ -11,7 +12,7 @@ public abstract class AppController {
     protected FileManager fileManager;
     protected RestaurantManager restaurantManager;
     //protected UserManager userManager;
-    //protected OrderManager orderManager;
+    protected OrderManager orderManager;
     protected DriverPool driverPool;
     
     // Current session state
@@ -35,7 +36,7 @@ public abstract class AppController {
         this.fileManager = new FileManager();
         this.restaurantManager = new RestaurantManager(fileManager);
         //this.userManager = new UserManager();
-        //this.orderManager = new OrderManager();
+        this.orderManager = new OrderManager();
         this.driverPool = new DriverPool(fileManager);
         this.currentUserID = null;
         this.currentUserRole = UserRole.NONE;
@@ -55,6 +56,7 @@ public abstract class AppController {
                 currentUserID = id;
                 currentUserRole = UserRole.CUSTOMER;
             }
+
             return customer;
         } catch (IllegalArgumentException e) {
             return null;
@@ -74,6 +76,7 @@ public abstract class AppController {
                 currentUserID = id;
                 currentUserRole = UserRole.DRIVER;
             }
+
             return driver;
         } catch (IllegalArgumentException e) {
             return null;
@@ -93,6 +96,7 @@ public abstract class AppController {
                 currentUserID = id;
                 currentUserRole = UserRole.ADMINISTRATOR;
             }
+
             return admin;
         } catch (IllegalArgumentException e) {
             return null;
@@ -152,6 +156,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
+
         return getRestaurantManager().addRestaurant(name, category);
     }
 
@@ -164,6 +169,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
+
         return getRestaurantManager().removeRestaurant(restaurantId);
     }
 
@@ -178,6 +184,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
+
         return getRestaurantManager().updateRestaurant(restaurantId, newName, newCategory);
     }
 
@@ -192,6 +199,7 @@ public abstract class AppController {
         if (restaurant == null) {
             return "Restaurant not found.";
         }
+
         return restaurant.getMenuItemsToString(getFileManager());
     }
 
@@ -207,6 +215,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
+
         return getRestaurantManager().addRestaurantMenuItem(name, category, BigDecimal.valueOf(price), restaurantId);
     }
 
@@ -219,6 +228,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.CUSTOMER || currentUserID == null) {
             return null;
         }
+
         return getFileManager().getCustomer(currentUserID);
     }
 
@@ -231,6 +241,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
+
         return getFileManager().addCustomer(UUID.randomUUID(), name, username, email);
     }
 
@@ -243,6 +254,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
+
         return getFileManager().removeCustomer(customerId);
     }
 
@@ -272,6 +284,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
+
         return getFileManager().addDriver(UUID.randomUUID(), name, username, email, true);
     }
 
@@ -284,6 +297,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
+
         return getFileManager().removeDriver(driverId);
     }
 
@@ -314,6 +328,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
+
         return getFileManager().addAdmin(UUID.randomUUID(), username, name, email);
     }
 
@@ -382,6 +397,20 @@ public abstract class AppController {
         return driver != null ? driver.getAvgRating() : -1;
     }
 
+    // ==================== Order Operations ====================
+    // display all orders for admin
+    /**
+     * Gets all orders in the system (admin only)
+     * @return Map of all orders by UUID
+     */
+    public Map<UUID, OrderManager.Order> getAllOrders() {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return null;
+        }
+
+        return getOrderManager().getAllOrders();
+    }
+
     // ==================== Getters ====================
     public UUID getCurrentUserID() {
         return currentUserID;
@@ -391,6 +420,7 @@ public abstract class AppController {
         return currentUserRole;
     }
 
+    // ==================== Getters for Managers ====================
     public FileManager getFileManager() {
         return fileManager;
     }
@@ -401,6 +431,10 @@ public abstract class AppController {
 
     public DriverPool getDriverPool() {
         return driverPool;
+    }
+
+    public OrderManager getOrderManager() {
+        return orderManager;
     }
 
     // ==================== Abstract Methods (UI must implement) ====================
