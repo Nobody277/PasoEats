@@ -52,8 +52,8 @@ public class MenuItem {
         this.restaurantId = restaurantId;
     }
 
+    // Behavior methods
     public String detailsToString() {
         return String.format("%s - %s (%s)", itemId, name, price);
     }
-    
 }
