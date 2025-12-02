@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.UUID;
+import java.math.BigDecimal;
 
 /**
  * Abstract base class that handles core application logic and state.
@@ -9,7 +10,7 @@ public abstract class AppController {
     // Core managers
     protected FileManager fileManager;
     protected RestaurantManager restaurantManager;
-    protected UserManager userManager;
+    //protected UserManager userManager;
     //protected OrderManager orderManager;
     protected DriverPool driverPool;
     
@@ -41,7 +42,6 @@ public abstract class AppController {
     }
 
     // ==================== Authentication ====================
-
     /**
      * Attempts to login a customer
      * @param customerId The customer's UUID as string
@@ -50,7 +50,7 @@ public abstract class AppController {
     public Customer loginCustomer(String customerId) {
         try {
             UUID id = UUID.fromString(customerId);
-            Customer customer = fileManager.getCustomer(id);
+            Customer customer = getFileManager().getCustomer(id);
             if (customer != null) {
                 currentUserID = id;
                 currentUserRole = UserRole.CUSTOMER;
@@ -69,7 +69,7 @@ public abstract class AppController {
     public Driver loginDriver(String driverId) {
         try {
             UUID id = UUID.fromString(driverId);
-            Driver driver = fileManager.getDriver(id);
+            Driver driver = getFileManager().getDriver(id);
             if (driver != null) {
                 currentUserID = id;
                 currentUserRole = UserRole.DRIVER;
@@ -88,7 +88,7 @@ public abstract class AppController {
     public Administrator loginAdministrator(String adminId) {
         try {
             UUID id = UUID.fromString(adminId);
-            Administrator admin = fileManager.getAdmin(id);
+            Administrator admin = getFileManager().getAdmin(id);
             if (admin != null) {
                 currentUserID = id;
                 currentUserRole = UserRole.ADMINISTRATOR;
@@ -122,7 +122,7 @@ public abstract class AppController {
      * @return List of all restaurants
      */
     public List<Restaurant> getAllRestaurants() {
-        return restaurantManager.getRestaurants();
+        return getRestaurantManager().getRestaurants();
     }
 
     /**
@@ -130,7 +130,7 @@ public abstract class AppController {
      * @return Formatted restaurant list
      */
     public String getAllRestaurantsString() {
-        return restaurantManager.getAllRestaurantsString();
+        return getRestaurantManager().getAllRestaurantsString();
     }
 
     /**
@@ -139,20 +139,7 @@ public abstract class AppController {
      * @return Restaurant if found
      */
     public Restaurant getRestaurant(UUID restaurantId) {
-        return restaurantManager.findRestaurantById(restaurantId);
-    }
-
-    /**
-     * Gets menu items for a restaurant as formatted string
-     * @param restaurantId UUID of the restaurant
-     * @return Formatted menu items string
-     */
-    public String getRestaurantMenuString(UUID restaurantId) {
-        Restaurant restaurant = restaurantManager.findRestaurantById(restaurantId);
-        if (restaurant == null) {
-            return "Restaurant not found.";
-        }
-        return restaurant.getMenuItemsToString(fileManager);
+        return getRestaurantManager().findRestaurantById(restaurantId);
     }
 
     /**
@@ -165,7 +152,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return restaurantManager.addRestaurant(name, category);
+        return getRestaurantManager().addRestaurant(name, category);
     }
 
     /**
@@ -177,7 +164,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return restaurantManager.removeRestaurant(restaurantId);
+        return getRestaurantManager().removeRestaurant(restaurantId);
     }
 
     /**
@@ -191,7 +178,36 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return restaurantManager.updateRestaurant(restaurantId, newName, newCategory);
+        return getRestaurantManager().updateRestaurant(restaurantId, newName, newCategory);
+    }
+
+    // ==================== Restaurant Menu Item Operations ====================
+    /**
+     * Gets menu items for a restaurant as formatted string
+     * @param restaurantId UUID of the restaurant
+     * @return Formatted menu items string
+     */
+    public String getRestaurantMenuString(UUID restaurantId) {
+        Restaurant restaurant = getRestaurantManager().findRestaurantById(restaurantId);
+        if (restaurant == null) {
+            return "Restaurant not found.";
+        }
+        return restaurant.getMenuItemsToString(getFileManager());
+    }
+
+    /**
+     * Adds a new menu item to a restaurant (admin only)
+     * @param name Menu item name
+     * @param category Menu item category
+     * @param price Menu item price
+     * @param restaurantId UUID of the restaurant
+     * @return true if successful
+     */
+    public boolean addMenuItemToRestaurant(String name, String category, double price, UUID restaurantId) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+        return getRestaurantManager().addRestaurantMenuItem(name, category, BigDecimal.valueOf(price), restaurantId);
     }
 
     // ==================== Customer Operations ====================
@@ -203,8 +219,8 @@ public abstract class AppController {
         if (currentUserRole != UserRole.CUSTOMER || currentUserID == null) {
             return null;
         }
-        return fileManager.getCustomer(currentUserID);
-    }// TODO do i need this?
+        return getFileManager().getCustomer(currentUserID);
+    }
 
     /**
      * Adds a new customer (admin only)
@@ -215,7 +231,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return fileManager.addCustomer(name);
+        return getFileManager().addCustomer(name);
     }
 
     /**
@@ -227,7 +243,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return fileManager.removeCustomer(customerId);
+        return getFileManager().removeCustomer(customerId);
     }
 
     /**
@@ -240,7 +256,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return fileManager.updateCustomerName(customerId, newName);
+        return getFileManager().updateCustomerName(customerId, newName);
     }
 
     // ==================== Driver Operations ====================
@@ -253,7 +269,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return fileManager.addDriver(name);
+        return getFileManager().addDriver(name);
     }
 
     /**
@@ -265,7 +281,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return fileManager.removeDriver(driverId);
+        return getFileManager().removeDriver(driverId);
     }
 
     /**
@@ -278,7 +294,7 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return fileManager.updateDriverName(driverId, newName);
+        return getFileManager().updateDriverName(driverId, newName);
     }
 
     // ==================== Administrator Operations ====================
@@ -292,14 +308,39 @@ public abstract class AppController {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return fileManager.addAdministrator(name);
+        return getFileManager().addAdministrator(name);
     }
 
-    
-    // ==================== Driver Operations ====================
+    /**
+     * Deletes an administrator (admin only)
+     * @param adminId UUID of the administrator
+     * @return true if successful
+     */
+    public boolean deleteAdministrator(UUID adminId) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+
+        return getFileManager().removeAdministrator(adminId);
+    }
 
     /**
-     * Updates driver availability
+     * Update administrator details (admin only)
+     * @param adminId UUID of the administrator
+     * @param available
+     * @return
+     */
+    public boolean updateAdministratorDetails(UUID adminId, String newName) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+
+        return getFileManager().updateAdministratorName(adminId, newName);
+    }
+    
+    // ==================== Driver Operations ====================
+    /**
+     * Updates driver availability and updates the driver pool accordingly
      * @param available New availability status
      * @return true if successful
      */
@@ -307,10 +348,14 @@ public abstract class AppController {
         if (currentUserRole != UserRole.DRIVER || currentUserID == null) {
             return false;
         }
-        Driver driver = fileManager.getDriver(currentUserID);
+
+        Driver driver = getFileManager().getDriver(currentUserID);
         if (driver != null) {
-            return fileManager.updateDriver(currentUserID, available, driver.getAvgRating());
+            getFileManager().updateDriver(currentUserID, available, driver.getAvgRating());
+            getDriverPool().updatePoolDrivers(getFileManager());
+            return true;
         }
+
         return false;
     }
 
@@ -322,12 +367,13 @@ public abstract class AppController {
         if (currentUserRole != UserRole.DRIVER || currentUserID == null) {
             return -1;
         }
-        Driver driver = fileManager.getDriver(currentUserID);
+
+        Driver driver = getFileManager().getDriver(currentUserID);
+
         return driver != null ? driver.getAvgRating() : -1;
     }
 
     // ==================== Getters ====================
-
     public UUID getCurrentUserID() {
         return currentUserID;
     }
@@ -349,7 +395,6 @@ public abstract class AppController {
     }
 
     // ==================== Abstract Methods (UI must implement) ====================
-
     /**
      * Starts the application UI
      */
