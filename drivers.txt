@@ -1,2 +1,2 @@
-e4950d0e-6ec4-4a01-ac57-b57cc21ae878, driver_mike, Mike Driver, mike@email.com, false, 4.5
-a64550c2-1fd0-4fb8-bc7b-a8365965884d, driver_sarah, Sarah Driver, sarah@email.com, false, 0.0
+# Format: DriverId, Username, Name, Email, Available, AvgRating
+766c7ee4-1fce-47e9-836b-8e609062ac59, Billy_123, Billy, Billy@gmail.com, true, 0.0

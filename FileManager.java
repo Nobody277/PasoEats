@@ -128,6 +128,8 @@ public class FileManager {
      * Loads restaurants so Brian is happy :D
      */
     private void loadRestaurants() {
+        restaurants.clear();
+        restaurantsList.clear();
         loadFromFile(RESTAURANTS_FILE, "restaurants", line -> {
             try {
                 String[] parts = line.split(",");
@@ -147,6 +149,8 @@ public class FileManager {
      * Load all the menu items so people can eat more food :D
      */
     private void loadMenuItems() {
+        menuItems.clear();
+        menuItemsList.clear();
         loadFromFile(MENU_FILE, "menuitems", line -> {
             try {
                 String[] parts = line.split(",");
@@ -168,6 +172,7 @@ public class FileManager {
      * Loads customers so people can order food... duh?
      */
     private void loadCustomers() {
+        customers.clear();
         loadFromFile(CUSTOMERS_FILE, "customers", line -> {
             try {
                 String[] parts = line.split(",");
@@ -187,6 +192,7 @@ public class FileManager {
      * Guess what this one does?
      */
     private void loadDrivers() {
+        drivers.clear();
         loadFromFile(DRIVERS_FILE, "drivers", line -> {
             try {
                 String[] parts = line.split(",");
@@ -210,6 +216,7 @@ public class FileManager {
      * Connor... this is why I hate comments. Just read the code.
      */
     private void loadAdmins() {
+        admins.clear();
         loadFromFile(ADMINS_FILE, "admins", line -> {
             try {
                 String[] parts = line.split(",");
@@ -229,6 +236,7 @@ public class FileManager {
      * OMFG it I hate copy pasting this code!
      */
     private void loadOrders() {
+        orders.clear();
         loadFromFile(ORDERS_FILE, "orders", line -> {
             try {
                 String[] parts = line.split(",");
@@ -380,6 +388,15 @@ public class FileManager {
         if (customers.containsKey(customerId)) {
             return false;
         }
+        // Check for duplicate username or email
+        if (customerUsernameExists(username)) {
+            System.err.println("Customer with username " + username + " already exists");
+            return false;
+        }
+        if (customerEmailExists(email)) {
+            System.err.println("Customer with email " + email + " already exists");
+            return false;
+        }
         Customer customer = new Customer(customerId, name, username, email);
         customers.put(customerId, customer);
         return appendToFile(CUSTOMERS_FILE, customerId + ", " + username + ", " + name + ", " + email);
@@ -397,12 +414,42 @@ public class FileManager {
         return customers.get(customerId);
     }
 
+    public Customer getCustomerByUsername(String username) {
+        for (Customer customer : customers.values()) {
+            if (customer.getUsername().equals(username)) {
+                return customer;
+            }
+        }
+        return null;
+    }
+
+    public boolean customerUsernameExists(String username) {
+        return getCustomerByUsername(username) != null;
+    }
+
+    public boolean customerEmailExists(String email) {
+        for (Customer customer : customers.values()) {
+            if (customer.getEmail().equals(email)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Map<UUID, Customer> getAllCustomers() {
         return new HashMap<>(customers);
     }
 
     public boolean addDriver(UUID driverId, String username, String name, String email, boolean available) {
         if (drivers.containsKey(driverId)) {
+            return false;
+        }
+        if (driverUsernameExists(username)) {
+            System.err.println("Driver with username " + username + " already exists");
+            return false;
+        }
+        if (driverEmailExists(email)) {
+            System.err.println("Driver with email " + email + " already exists");
             return false;
         }
         Driver driver = new Driver(driverId, name, username, email);
@@ -434,12 +481,42 @@ public class FileManager {
         return drivers.get(driverId);
     }
 
+    public Driver getDriverByUsername(String username) {
+        for (Driver driver : drivers.values()) {
+            if (driver.getUsername().equals(username)) {
+                return driver;
+            }
+        }
+        return null;
+    }
+
+    public boolean driverUsernameExists(String username) {
+        return getDriverByUsername(username) != null;
+    }
+
+    public boolean driverEmailExists(String email) {
+        for (Driver driver : drivers.values()) {
+            if (driver.getEmail().equals(email)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Map<UUID, Driver> getAllDrivers() {
         return new HashMap<>(drivers);
     }
 
     public boolean addAdmin(UUID adminId, String username, String name, String email) {
         if (admins.containsKey(adminId)) {
+            return false;
+        }
+        if (adminUsernameExists(username)) {
+            System.err.println("Administrator with username " + username + " already exists");
+            return false;
+        }
+        if (adminEmailExists(email)) {
+            System.err.println("Administrator with email " + email + " already exists");
             return false;
         }
         Administrator admin = new Administrator(adminId, name, username, email);
@@ -457,6 +534,28 @@ public class FileManager {
 
     public Administrator getAdmin(UUID adminId) {
         return admins.get(adminId);
+    }
+
+    public Administrator getAdminByUsername(String username) {
+        for (Administrator admin : admins.values()) {
+            if (admin.getUsername().equals(username)) {
+                return admin;
+            }
+        }
+        return null;
+    }
+
+    public boolean adminUsernameExists(String username) {
+        return getAdminByUsername(username) != null;
+    }
+
+    public boolean adminEmailExists(String email) {
+        for (Administrator admin : admins.values()) {
+            if (admin.getEmail().equals(email)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public Map<UUID, Administrator> getAllAdmins() {

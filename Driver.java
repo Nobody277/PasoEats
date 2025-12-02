@@ -1,6 +1,6 @@
 import java.util.UUID;
 
-public class Driver extends User {
+public class Driver extends User implements Comparable<Driver> {
     // variables
     private boolean available;
     private double avgRating;
@@ -73,5 +73,10 @@ public class Driver extends User {
         ratings[rateCounter] = newRating;
         rateCounter = (rateCounter + 1) % ratings.length;
         calcAvgRating();
+    }
+
+    @Override
+    public int compareTo(Driver other) {
+        return Double.compare(other.avgRating, this.avgRating);
     }
 }
