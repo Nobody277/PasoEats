@@ -398,7 +398,6 @@ public abstract class AppController {
     }
 
     // ==================== Order Operations ====================
-    // display all orders for admin
     /**
      * Gets all orders in the system (admin only)
      * @return Map of all orders by UUID
@@ -409,6 +408,27 @@ public abstract class AppController {
         }
 
         return getOrderManager().getAllOrders();
+    }
+
+    /**
+     * Places a new order and assigns the next available driver (customer only)
+     * @param customerId
+     * @param items
+     * @return Order if successful, null otherwise
+     */
+    public OrderManager.Order placeOrder(UUID customerId, List<String> items) {
+        if (currentUserRole != UserRole.CUSTOMER || currentUserID == null || !currentUserID.equals(customerId)) {
+            return null;
+        }
+
+        OrderManager.Order newOrder = new OrderManager.Order();
+        newOrder = getOrderManager().place(customerId, items);
+        if (newOrder == null || getDriverPool().isEmpty()) {
+            return null;
+        }
+        getOrderManager().acceptNext(getDriverPool().getNextAvailableDriver().getId());
+
+        return newOrder;
     }
 
     // ==================== Getters ====================

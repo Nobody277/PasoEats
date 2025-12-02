@@ -102,6 +102,15 @@ public class RestaurantManager {
     }
 
     /**
+     * Gets the menu items for a specific restaurant via FileManager
+     * @param restaurantId UUID of the restaurant
+     * @return List of MenuItem
+     */
+    public List<MenuItem> getMenuItemsForRestaurant(UUID restaurantId) {
+        return this.getFileManager().getMenuItemsForRestaurant(restaurantId);
+    }
+
+    /**
      * Gets a formatted string of all restaurants
      * @return Formatted string of all restaurants
      */

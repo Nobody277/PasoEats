@@ -52,26 +52,6 @@ public class MenuItem {
         this.restaurantId = restaurantId;
     }
 
-    public String getMenuItems(UUID restaurantId) {
-        // TODO
-        return null;
-    }
-
-    public String modifyMenuItem(UUID itemId) {
-        // TODO
-        return null;
-    }
-
-    public boolean deleteMenuItem(UUID itemId) {
-        // TODO
-        return false;
-    }
-
-    public boolean addMenuItem(MenuItem menuItem) {
-        // TODO
-        return false;
-    }
-
     public String detailsToString() {
         return String.format("%s - %s (%s)", itemId, name, price);
     }
