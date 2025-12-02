@@ -5,6 +5,10 @@ import java.util.UUID;
 public class RestaurantManager {
     private final FileManager fileManager;
 
+    /**
+     * Constructor for RestaurantManager class
+     * @param fileManager FileManager instance for data operations
+     */
     public RestaurantManager(FileManager fileManager) {
         this.fileManager = fileManager;
     }

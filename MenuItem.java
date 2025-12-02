@@ -7,6 +7,13 @@ public class MenuItem {
     private double price;
     private UUID restaurantId;
 
+    /*
+     * Constructor for MenuItem class
+     * @param name of the menu item
+     * @param category of the menu item
+     * @param price of the menu item
+     * @param restaurantId of the menu item
+     */
     public MenuItem(String name, String category, double price, UUID restaurantId) {
         this.itemId = UUID.randomUUID();
         this.name = name;
