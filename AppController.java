@@ -9,7 +9,7 @@ public abstract class AppController {
     // Core managers
     protected FileManager fileManager;
     protected RestaurantManager restaurantManager;
-    //protected UserManager userManager;
+    protected UserManager userManager;
     //protected OrderManager orderManager;
     protected DriverPool driverPool;
     
@@ -180,6 +180,122 @@ public abstract class AppController {
         return restaurantManager.removeRestaurant(restaurantId);
     }
 
+    /**
+     * Updates a restaurant's details (admin only)
+     * @param restaurantId UUID of the restaurant
+     * @param newName New name
+     * @param newCategory New category
+     * @return true if successful
+     */
+    public boolean updateRestaurant(UUID restaurantId, String newName, String newCategory) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+        return restaurantManager.updateRestaurant(restaurantId, newName, newCategory);
+    }
+
+    // ==================== Customer Operations ====================
+    /**
+     * Gets the current customer's details
+     * @return Customer if logged in, null otherwise
+     */
+    public Customer getCurrentCustomer() {
+        if (currentUserRole != UserRole.CUSTOMER || currentUserID == null) {
+            return null;
+        }
+        return fileManager.getCustomer(currentUserID);
+    }// TODO do i need this?
+
+    /**
+     * Adds a new customer (admin only)
+     * @param name Customer name
+     * @return true if successful
+     */
+    public boolean addCustomer(String name) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+        return fileManager.addCustomer(name);
+    }
+
+    /**
+     * Deletes a customer (admin only)
+     * @param customerId UUID of the customer
+     * @return true if successful
+     */
+    public boolean deleteCustomer(UUID customerId) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+        return fileManager.removeCustomer(customerId);
+    }
+
+    /**
+     * Updates a customer's name (admin only)
+     * @param customerId UUID of the customer
+     * @param newName New name
+     * @return true if successful
+     */
+    public boolean updateCustomerName(UUID customerId, String newName) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+        return fileManager.updateCustomerName(customerId, newName);
+    }
+
+    // ==================== Driver Operations ====================
+    /**
+     * Adds a new driver (admin only)
+     * @param name Driver name
+     * @return true if successful
+     */
+    public boolean addDriver(String name) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+        return fileManager.addDriver(name);
+    }
+
+    /**
+     * Deletes a driver (admin only)
+     * @param driverId UUID of the driver
+     * @return true if successful
+     */
+    public boolean deleteDriver(UUID driverId) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+        return fileManager.removeDriver(driverId);
+    }
+
+    /**
+     * Updates a driver's name (admin only)
+     * @param driverId UUID of the driver
+     * @param newName New name
+     * @return true if successful
+     */
+    public boolean updateDriverDetails(UUID driverId, String newName) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+        return fileManager.updateDriverName(driverId, newName);
+    }
+
+    // ==================== Administrator Operations ====================
+
+    /**
+     * Adds a new administrator (admin only)
+     * @param name Administrator name
+     * @return true if successful
+     */
+    public boolean addAdministrator(String name) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+        return fileManager.addAdministrator(name);
+    }
+
+    
     // ==================== Driver Operations ====================
 
     /**
