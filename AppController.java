@@ -246,18 +246,21 @@ public abstract class AppController {
         return getFileManager().removeCustomer(customerId);
     }
 
+    /*
     /**
      * Updates a customer's name (admin only)
      * @param customerId UUID of the customer
      * @param newName New name
      * @return true if successful
      */
+    /*
     public boolean updateCustomerDetails(UUID customerId, String newName, String newUsername, String newEmail) {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return getFileManager().updateCustomerDetails(customerId, newName, newUsername, newEmail); //TODO: this is not implemented yet in FileManager
+        return getFileManager().updateCustomerDetails(customerId, newName, newUsername, newEmail); //TODO: this is not implemented yet in FileManager, or remove this method
     }
+    */
 
     // ==================== Driver Operations ====================
     /**
@@ -284,18 +287,21 @@ public abstract class AppController {
         return getFileManager().removeDriver(driverId);
     }
 
+    /*
     /**
      * Updates a driver's name (admin only)
      * @param driverId UUID of the driver
      * @param newName New name
      * @return true if successful
      */
+    /*
     public boolean updateDriverDetails(UUID driverId, String newUsername, String newName, String newEmail) {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
-        return getFileManager().updateDriverDetails(driverId, newUsername, newName, newEmail);//TODO: this is not implemented yet in FileManager
+        return getFileManager().updateDriverDetails(driverId, newUsername, newName, newEmail);//TODO: this is not implemented yet in FileManager, or remove this method
     }
+    */
 
     // ==================== Administrator Operations ====================
 
@@ -324,19 +330,22 @@ public abstract class AppController {
         return getFileManager().removeAdmin(adminId);
     }
 
+    /*
     /**
      * Update administrator details (admin only)
      * @param adminId UUID of the administrator
      * @param available
      * @return
      */
+    /*
     public boolean updateAdministratorDetails(UUID adminId, String newUsername, String newName, String newEmail) {
         if (currentUserRole != UserRole.ADMINISTRATOR) {
             return false;
         }
 
-        return getFileManager().updateAdministratorDetails(adminId, newUsername, newName, newEmail);//TODO: this is not implemented yet in FileManager
+        return getFileManager().updateAdministratorDetails(adminId, newUsername, newName, newEmail);//TODO: this is not implemented yet in FileManager, or remove this method
     }
+    */
     
     // ==================== Driver Operations ====================
     /**
