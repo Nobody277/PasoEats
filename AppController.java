@@ -465,6 +465,17 @@ public abstract class AppController {
         return newOrder;
     }
 
+    /**
+     * Update order status
+     * @return true if successful
+     */
+    public void updateOrderStatus(UUID orderId, OrderManager.Status status) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return;
+        }
+        getOrderManager().markStatus(orderId, status);
+    }
+
     // ==================== Getters ====================
     public UUID getCurrentUserID() {
         return currentUserID;
