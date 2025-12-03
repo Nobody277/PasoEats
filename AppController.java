@@ -45,62 +45,44 @@ public abstract class AppController {
     // ==================== Authentication ====================
     /**
      * Attempts to login a customer
-     * @param customerId The customer's UUID as string
+     * @param username The customer's username
      * @return Customer if found, null otherwise
      */
-    public Customer loginCustomer(String customerId) {
-        try {
-            UUID id = UUID.fromString(customerId);
-            Customer customer = getFileManager().getCustomer(id);
-            if (customer != null) {
-                currentUserID = id;
-                currentUserRole = UserRole.CUSTOMER;
-            }
-
-            return customer;
-        } catch (IllegalArgumentException e) {
-            return null;
+    public Customer loginCustomer(String username) {
+        Customer customer = getFileManager().getCustomerByUsername(username);
+        if (customer != null) {
+            currentUserID = customer.getId();
+            currentUserRole = UserRole.CUSTOMER;
         }
+        return customer;
     }
 
     /**
      * Attempts to login a driver
-     * @param driverId The driver's UUID as string
+     * @param username The driver's username
      * @return Driver if found, null otherwise
      */
-    public Driver loginDriver(String driverId) {
-        try {
-            UUID id = UUID.fromString(driverId);
-            Driver driver = getFileManager().getDriver(id);
-            if (driver != null) {
-                currentUserID = id;
-                currentUserRole = UserRole.DRIVER;
-            }
-
-            return driver;
-        } catch (IllegalArgumentException e) {
-            return null;
+    public Driver loginDriver(String username) {
+        Driver driver = getFileManager().getDriverByUsername(username);
+        if (driver != null) {
+            currentUserID = driver.getId();
+            currentUserRole = UserRole.DRIVER;
         }
+        return driver;
     }
 
     /**
      * Attempts to login an administrator
-     * @param adminId The administrator's UUID as string
+     * @param username The administrator's username
      * @return Administrator if found, null otherwise
      */
-    public Administrator loginAdministrator(String adminId) {
-        try {
-            UUID id = UUID.fromString(adminId);
-            Administrator admin = getFileManager().getAdmin(id);
-            if (admin != null) {
-                currentUserID = id;
-                currentUserRole = UserRole.ADMINISTRATOR;
-            }
-
-            return admin;
-        } catch (IllegalArgumentException e) {
-            return null;
+    public Administrator loginAdministrator(String username) {
+        Administrator admin = getFileManager().getAdminByUsername(username);
+        if (admin != null) {
+            currentUserID = admin.getId();
+            currentUserRole = UserRole.ADMINISTRATOR;
         }
+        return admin;
     }
 
     /**
@@ -246,6 +228,22 @@ public abstract class AppController {
     }
 
     /**
+     * Creates a new customer account
+     * @param name Customer name
+     * @param username Username
+     * @param email Email
+     * @return Customer if successful, null otherwise
+     */
+    public Customer createCustomerAccount(String name, String username, String email) {
+        UUID customerId = UUID.randomUUID();
+        boolean success = getFileManager().addCustomer(customerId, username, name, email);
+        if (success) {
+            return getFileManager().getCustomer(customerId);
+        }
+        return null;
+    }
+
+    /**
      * Deletes a customer (admin only)
      * @param customerId UUID of the customer
      * @return true if successful
@@ -286,6 +284,22 @@ public abstract class AppController {
         }
 
         return getFileManager().addDriver(UUID.randomUUID(), name, username, email, true);
+    }
+
+    /**
+     * Creates a new driver account
+     * @param name Driver name
+     * @param username Username
+     * @param email Email
+     * @return Driver if successful, null otherwise
+     */
+    public Driver createDriverAccount(String name, String username, String email) {
+        UUID driverId = UUID.randomUUID();
+        boolean success = getFileManager().addDriver(driverId, username, name, email, true);
+        if (success) {
+            return getFileManager().getDriver(driverId);
+        }
+        return null;
     }
 
     /**
@@ -330,6 +344,22 @@ public abstract class AppController {
         }
 
         return getFileManager().addAdmin(UUID.randomUUID(), username, name, email);
+    }
+
+    /**
+     * Creates a new admin account
+     * @param username Username
+     * @param name Administrator name
+     * @param email Email
+     * @return Administrator if successful, null otherwise
+     */
+    public Administrator createAdministratorAccount(String username, String name, String email) {
+        UUID adminId = UUID.randomUUID();
+        boolean success = getFileManager().addAdmin(adminId, username, name, email);
+        if (success) {
+            return getFileManager().getAdmin(adminId);
+        }
+        return null;
     }
 
     /**

@@ -1,3 +1,1 @@
 # Format: OrderId, CustomerId, RestaurantId, ItemIds, Status, DriverId, CreatedAt, TotalPrice
-364c9916-f7ff-45ea-b7f6-bbd6a568ab07, 72b4b58a-40cb-42fd-b57a-f1e828486e70, c994a081-6a20-49f5-83be-61da9d4b38a2, d9184028-b3d5-4788-a0ce-77635720399d,31a6ae4b-f13c-4584-a64e-f58ff08007fa, ACCEPTED, e4950d0e-6ec4-4a01-ac57-b57cc21ae878, 10/28/2025 1:15 PM, 12.48
-a348d641-cf0e-484d-8b78-a583cfcf0be1, 0a466a4d-15b0-40d8-ad19-f6b4035e86f7, 6a978d8a-ca2a-4bce-b23c-b6aae3c47bfe, ad0b3feb-2f9b-4923-9e76-f98d2e0dc768, PLACED, null, 10/28/2025 1:20 PM, 2.99

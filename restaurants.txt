@@ -1,5 +1,1 @@
 # Format: RestaurantId, Name, Category
-UUID00100, Burgers N Stuff, Diner
-UUID00101, Coffee Star, Coffee Shop
-UUID00102, Top Roast Coffee, Coffee Shopc994a081-6a20-49f5-83be-61da9d4b38a2, Burgers N Stuff, Diner
-6a978d8a-ca2a-4bce-b23c-b6aae3c47bfe, Coffee Star, Coffee Shop
