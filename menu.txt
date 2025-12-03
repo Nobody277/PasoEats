@@ -1,3 +1,1 @@
 # Format: ItemId, Name, Category, Price, RestaurantId
-d9184028-b3d5-4788-a0ce-77635720399d, Classic Hamburger XL, Burgers, 7.99, c994a081-6a20-49f5-83be-61da9d4b38a2
-ad0b3feb-2f9b-4923-9e76-f98d2e0dc768, Coffee, Drinks, 2.99, 6a978d8a-ca2a-4bce-b23c-b6aae3c47bfe

@@ -69,6 +69,26 @@ public class RestaurantManager {
     }
 
     /**
+     * Adds a new menu item for a restaurant via FileManager
+     * @param name Menu item name
+     * @param category Menu item category
+     * @param price Menu item price
+     * @return true if successful
+     */
+    public boolean addRestaurantMenuItem(String name, String category, BigDecimal price, UUID restaurantId) {
+        return this.getFileManager().addMenuItem(restaurantId, name, category, price, restaurantId);
+    }
+
+    /**
+     * Deletes a menu item for a restaurant via FileManager
+     * @param itemId UUID of the menu item
+     * @return true if successful
+     */
+    public boolean deleteRestaurantMenuItem(UUID itemId) {
+        return this.getFileManager().removeMenuItem(itemId);
+    }
+
+    /**
      * Modifies a menu item for a restaurant via FileManager
      * @param itemId UUID of the menu item
      * @param newName New name
@@ -79,6 +99,15 @@ public class RestaurantManager {
      */
     public boolean modifyRestaurantMenuItem(UUID itemId, String newName, String newCategory, BigDecimal newPrice, UUID newRestaurantId) {
         return this.getFileManager().updateMenuItem(itemId, newName, newCategory, newPrice, newRestaurantId);
+    }
+
+    /**
+     * Gets the menu items for a specific restaurant via FileManager
+     * @param restaurantId UUID of the restaurant
+     * @return List of MenuItem
+     */
+    public List<MenuItem> getMenuItemsForRestaurant(UUID restaurantId) {
+        return this.getFileManager().getMenuItemsForRestaurant(restaurantId);
     }
 
     /**
