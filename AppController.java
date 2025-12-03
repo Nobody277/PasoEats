@@ -256,21 +256,26 @@ public abstract class AppController {
         return getFileManager().removeCustomer(customerId);
     }
 
-    /*
     /**
-     * Updates a customer's name (admin only)
-     * @param customerId UUID of the customer
-     * @param newName New name
+     * Rates the driver for the current order (customer only)
+     * @param orderId UUID of the order
+     * @param rating Rating
      * @return true if successful
      */
-    /*
-    public boolean updateCustomerDetails(UUID customerId, String newName, String newUsername, String newEmail) {
-        if (currentUserRole != UserRole.ADMINISTRATOR) {
+    public boolean rateDriver(UUID orderId, double rating) {
+        if (currentUserRole != UserRole.CUSTOMER || currentUserID == null) {
             return false;
         }
-        return getFileManager().updateCustomerDetails(customerId, newName, newUsername, newEmail); //TODO: this is not implemented yet in FileManager, or remove this method
+
+        OrderManager.Order order = getOrderManager().get(orderId);
+        if (order == null || !order.getCustomerId().equals(currentUserID) || order.getId() == null) {
+            return false;
+        }
+
+        Driver driver = getFileManager().getDriver(order.getAssignedDriverId());
+
+        return getFileManager().updateDriver(driver.getId(), driver.isAvailable(), rating);
     }
-    */
 
     // ==================== Driver Operations ====================
     /**
@@ -313,6 +318,40 @@ public abstract class AppController {
         }
 
         return getFileManager().removeDriver(driverId);
+    }
+
+    /**
+     * Updates driver availability and updates the driver pool accordingly
+     * @param available New availability status
+     * @return true if successful
+     */
+    public boolean updateDriverAvailability(boolean available) {
+        if (currentUserRole != UserRole.DRIVER || currentUserID == null) {
+            return false;
+        }
+
+        Driver driver = getFileManager().getDriver(currentUserID);
+        if (driver != null) {
+            getFileManager().updateDriver(currentUserID, available, driver.getAvgRating());
+            getDriverPool().updatePoolDrivers(getFileManager());
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the current driver's rating
+     * @return Rating or -1 if not a driver
+     */
+    public double getCurrentDriverRating() {
+        if (currentUserRole != UserRole.DRIVER || currentUserID == null) {
+            return -1;
+        }
+
+        Driver driver = getFileManager().getDriver(currentUserID);
+
+        return driver != null ? driver.getAvgRating() : -1;
     }
 
     /*
@@ -391,41 +430,6 @@ public abstract class AppController {
         return getFileManager().updateAdministratorDetails(adminId, newUsername, newName, newEmail);//TODO: this is not implemented yet in FileManager, or remove this method
     }
     */
-    
-    // ==================== Driver Operations ====================
-    /**
-     * Updates driver availability and updates the driver pool accordingly
-     * @param available New availability status
-     * @return true if successful
-     */
-    public boolean updateDriverAvailability(boolean available) {
-        if (currentUserRole != UserRole.DRIVER || currentUserID == null) {
-            return false;
-        }
-
-        Driver driver = getFileManager().getDriver(currentUserID);
-        if (driver != null) {
-            getFileManager().updateDriver(currentUserID, available, driver.getAvgRating());
-            getDriverPool().updatePoolDrivers(getFileManager());
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Gets the current driver's rating
-     * @return Rating or -1 if not a driver
-     */
-    public double getCurrentDriverRating() {
-        if (currentUserRole != UserRole.DRIVER || currentUserID == null) {
-            return -1;
-        }
-
-        Driver driver = getFileManager().getDriver(currentUserID);
-
-        return driver != null ? driver.getAvgRating() : -1;
-    }
 
     // ==================== Order Operations ====================
     /**
