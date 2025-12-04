@@ -124,7 +124,7 @@ public class UserManager {
      * @param admin UUID of the admin
      * @return Admin object if found, null otherwise
      */
-    public Admin getAdmin(UUID admin){
+    public Administrator getAdmin(UUID admin){
         return getFileManager().getAdmin(admin);
     }
 
