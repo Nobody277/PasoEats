@@ -11,7 +11,7 @@ public abstract class AppController {
     // Core managers
     protected FileManager fileManager;
     protected RestaurantManager restaurantManager;
-    //protected UserManager userManager;
+    protected UserManager userManager;
     protected OrderManager orderManager;
     protected DriverPool driverPool;
     
@@ -35,7 +35,7 @@ public abstract class AppController {
     public AppController() {
         this.fileManager = new FileManager();
         this.restaurantManager = new RestaurantManager(fileManager);
-        //this.userManager = new UserManager();
+        this.userManager = new UserManager();
         this.orderManager = new OrderManager();
         this.driverPool = new DriverPool(fileManager);
         this.currentUserID = null;
@@ -485,7 +485,7 @@ public abstract class AppController {
         return currentUserRole;
     }
 
-    // ==================== Getters for Managers ====================
+    // ==================== Getters for Manager Instances ====================
     public FileManager getFileManager() {
         return fileManager;
     }
@@ -500,6 +500,10 @@ public abstract class AppController {
 
     public OrderManager getOrderManager() {
         return orderManager;
+    }
+
+    public UserManager getUserManager() {
+        return userManager;
     }
 
     // ==================== Abstract Methods (UI must implement) ====================
