@@ -2,7 +2,7 @@ import java.io.File;
 import java.util.UUID;
 
 public class UserManager {
-    final FileManager fileManager = new FileManager();
+    private FileManager fileManager = new FileManager();
     
     /*
      * Constructor
