@@ -1,1 +1,3 @@
 # Format: RestaurantId, Name, Category
+e5284b1d-d284-46b8-a80a-21cca31b70be, Burgers N Stuff, Diner
+2eac48c9-c4c9-4a63-a17d-fe4f96f4c54f, Coffee Star, Coffee Shop

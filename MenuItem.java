@@ -1,13 +1,14 @@
 import java.util.UUID;
+import java.math.BigDecimal;
 
 public class MenuItem {
     private UUID itemId;
     private String name;
     private String category;
-    private double price;
+    private BigDecimal price;
     private UUID restaurantId;
 
-    public MenuItem(String name, String category, double price, UUID restaurantId) {
+    public MenuItem(String name, String category, BigDecimal price, UUID restaurantId) {
         this.itemId = UUID.randomUUID();
         this.name = name;
         this.category = category;
@@ -52,7 +53,7 @@ public class MenuItem {
      * Gets the price of the menu item
      * @return price of the menu item
      */
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
@@ -60,7 +61,7 @@ public class MenuItem {
      * Sets the price of the menu item
      * @param price of the menu item
      */
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
@@ -94,6 +95,6 @@ public class MenuItem {
      * @return String
      */
     public String detailsToString() {
-        return String.format("%s - %s (%s)", itemId, name, price);
+        return String.format("%s - %s (%s)", name, category, price);
     }
 }

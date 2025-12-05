@@ -88,7 +88,7 @@ public class Restaurant {
         }
         
         StringBuilder sb = new StringBuilder();
-        sb.append("=== Menu Items for ").append(name).append(" ===\n");
+        sb.append("Menu Items for ").append(name).append(":\n");
         for (MenuItem menuItem : menuItems) {
             sb.append(menuItem.detailsToString()).append("\n");
         }
@@ -108,6 +108,6 @@ public class Restaurant {
      * @return String
      */
     public String detailsToString() {
-        return String.format("%s - %s (%s)", restaurantId.toString(), name, category);
+        return String.format("%s - %s", name, category);
     }
 }

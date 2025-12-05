@@ -11,7 +11,7 @@ public abstract class AppController {
     // Core managers
     protected FileManager fileManager;
     protected RestaurantManager restaurantManager;
-    //protected UserManager userManager;
+    protected UserManager userManager;
     protected OrderManager orderManager;
     protected DriverPool driverPool;
     
@@ -35,7 +35,7 @@ public abstract class AppController {
     public AppController() {
         this.fileManager = new FileManager();
         this.restaurantManager = new RestaurantManager(fileManager);
-        //this.userManager = new UserManager();
+        this.userManager = new UserManager(fileManager);
         this.orderManager = new OrderManager();
         this.driverPool = new DriverPool(fileManager);
         this.currentUserID = null;
@@ -224,7 +224,7 @@ public abstract class AppController {
             return false;
         }
 
-        return getFileManager().addCustomer(UUID.randomUUID(), name, username, email);
+        return getFileManager().addCustomer(username, name, email);
     }
 
     /**
@@ -235,10 +235,9 @@ public abstract class AppController {
      * @return Customer if successful, null otherwise
      */
     public Customer createCustomerAccount(String name, String username, String email) {
-        UUID customerId = UUID.randomUUID();
-        boolean success = getFileManager().addCustomer(customerId, username, name, email);
+        boolean success = getFileManager().addCustomer(username, name, email);
         if (success) {
-            return getFileManager().getCustomer(customerId);
+            return getFileManager().getCustomerByUsername(username);
         }
         return null;
     }
@@ -256,21 +255,26 @@ public abstract class AppController {
         return getFileManager().removeCustomer(customerId);
     }
 
-    /*
     /**
-     * Updates a customer's name (admin only)
-     * @param customerId UUID of the customer
-     * @param newName New name
+     * Rates the driver for the current order (customer only)
+     * @param orderId UUID of the order
+     * @param rating Rating
      * @return true if successful
      */
-    /*
-    public boolean updateCustomerDetails(UUID customerId, String newName, String newUsername, String newEmail) {
-        if (currentUserRole != UserRole.ADMINISTRATOR) {
+    public boolean rateDriver(UUID orderId, double rating) {
+        if (currentUserRole != UserRole.CUSTOMER || currentUserID == null) {
             return false;
         }
-        return getFileManager().updateCustomerDetails(customerId, newName, newUsername, newEmail); //TODO: this is not implemented yet in FileManager, or remove this method
+
+        OrderManager.Order order = getOrderManager().get(orderId);
+        if (order == null || !order.getCustomerId().equals(currentUserID) || order.getId() == null) {
+            return false;
+        }
+
+        Driver driver = getFileManager().getDriver(order.getAssignedDriverId());
+
+        return getFileManager().updateDriver(driver.getId(), driver.isAvailable(), rating);
     }
-    */
 
     // ==================== Driver Operations ====================
     /**
@@ -283,7 +287,7 @@ public abstract class AppController {
             return false;
         }
 
-        return getFileManager().addDriver(UUID.randomUUID(), name, username, email, true);
+        return getFileManager().addDriver(username, name, email, true);
     }
 
     /**
@@ -294,10 +298,9 @@ public abstract class AppController {
      * @return Driver if successful, null otherwise
      */
     public Driver createDriverAccount(String name, String username, String email) {
-        UUID driverId = UUID.randomUUID();
-        boolean success = getFileManager().addDriver(driverId, username, name, email, true);
+        boolean success = getFileManager().addDriver(username, name, email, true);
         if (success) {
-            return getFileManager().getDriver(driverId);
+            return getFileManager().getDriverByUsername(username);
         }
         return null;
     }
@@ -315,84 +318,6 @@ public abstract class AppController {
         return getFileManager().removeDriver(driverId);
     }
 
-    /*
-    /**
-     * Updates a driver's name (admin only)
-     * @param driverId UUID of the driver
-     * @param newName New name
-     * @return true if successful
-     */
-    /*
-    public boolean updateDriverDetails(UUID driverId, String newUsername, String newName, String newEmail) {
-        if (currentUserRole != UserRole.ADMINISTRATOR) {
-            return false;
-        }
-        return getFileManager().updateDriverDetails(driverId, newUsername, newName, newEmail);//TODO: this is not implemented yet in FileManager, or remove this method
-    }
-    */
-
-    // ==================== Administrator Operations ====================
-
-    /**
-     * Adds a new administrator with random UUID (admin only)
-     * @param name Administrator name
-     * @return true if successful
-     */
-    public boolean addAdministrator(String username, String name, String email) {
-        if (currentUserRole != UserRole.ADMINISTRATOR) {
-            return false;
-        }
-
-        return getFileManager().addAdmin(UUID.randomUUID(), username, name, email);
-    }
-
-    /**
-     * Creates a new admin account
-     * @param username Username
-     * @param name Administrator name
-     * @param email Email
-     * @return Administrator if successful, null otherwise
-     */
-    public Administrator createAdministratorAccount(String username, String name, String email) {
-        UUID adminId = UUID.randomUUID();
-        boolean success = getFileManager().addAdmin(adminId, username, name, email);
-        if (success) {
-            return getFileManager().getAdmin(adminId);
-        }
-        return null;
-    }
-
-    /**
-     * Deletes an administrator (admin only)
-     * @param adminId UUID of the administrator
-     * @return true if successful
-     */
-    public boolean deleteAdministrator(UUID adminId) {
-        if (currentUserRole != UserRole.ADMINISTRATOR) {
-            return false;
-        }
-
-        return getFileManager().removeAdmin(adminId);
-    }
-
-    /*
-    /**
-     * Update administrator details (admin only)
-     * @param adminId UUID of the administrator
-     * @param available
-     * @return
-     */
-    /*
-    public boolean updateAdministratorDetails(UUID adminId, String newUsername, String newName, String newEmail) {
-        if (currentUserRole != UserRole.ADMINISTRATOR) {
-            return false;
-        }
-
-        return getFileManager().updateAdministratorDetails(adminId, newUsername, newName, newEmail);//TODO: this is not implemented yet in FileManager, or remove this method
-    }
-    */
-    
-    // ==================== Driver Operations ====================
     /**
      * Updates driver availability and updates the driver pool accordingly
      * @param available New availability status
@@ -426,6 +351,82 @@ public abstract class AppController {
 
         return driver != null ? driver.getAvgRating() : -1;
     }
+
+    /*
+    /**
+     * Updates a driver's name (admin only)
+     * @param driverId UUID of the driver
+     * @param newName New name
+     * @return true if successful
+     */
+    /*
+    public boolean updateDriverDetails(UUID driverId, String newUsername, String newName, String newEmail) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+        return getFileManager().updateDriverDetails(driverId, newUsername, newName, newEmail);//TODO: this is not implemented yet in FileManager, or remove this method
+    }
+    */
+
+    // ==================== Administrator Operations ====================
+
+    /**
+     * Adds a new administrator with random UUID (admin only)
+     * @param name Administrator name
+     * @return true if successful
+     */
+    public boolean addAdministrator(String username, String name, String email) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+
+        return getFileManager().addAdmin(username, name, email);
+    }
+
+    /**
+     * Creates a new admin account
+     * @param username Username
+     * @param name Administrator name
+     * @param email Email
+     * @return Administrator if successful, null otherwise
+     */
+    public Administrator createAdministratorAccount(String username, String name, String email) {
+        boolean success = getFileManager().addAdmin(username, name, email);
+        if (success) {
+            return getFileManager().getAdminByUsername(username);
+        }
+        return null;
+    }
+
+    /**
+     * Deletes an administrator (admin only)
+     * @param adminId UUID of the administrator
+     * @return true if successful
+     */
+    public boolean deleteAdministrator(UUID adminId) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+
+        return getFileManager().removeAdmin(adminId);
+    }
+
+    /*
+    /**
+     * Update administrator details (admin only)
+     * @param adminId UUID of the administrator
+     * @param available
+     * @return
+     */
+    /*
+    public boolean updateAdministratorDetails(UUID adminId, String newUsername, String newName, String newEmail) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return false;
+        }
+
+        return getFileManager().updateAdministratorDetails(adminId, newUsername, newName, newEmail);//TODO: this is not implemented yet in FileManager, or remove this method
+    }
+    */
 
     // ==================== Order Operations ====================
     /**
@@ -461,6 +462,17 @@ public abstract class AppController {
         return newOrder;
     }
 
+    /**
+     * Update order status
+     * @return true if successful
+     */
+    public void updateOrderStatus(UUID orderId, OrderManager.Status status) {
+        if (currentUserRole != UserRole.ADMINISTRATOR) {
+            return;
+        }
+        getOrderManager().markStatus(orderId, status);
+    }
+
     // ==================== Getters ====================
     public UUID getCurrentUserID() {
         return currentUserID;
@@ -470,7 +482,7 @@ public abstract class AppController {
         return currentUserRole;
     }
 
-    // ==================== Getters for Managers ====================
+    // ==================== Getters for Manager Instances ====================
     public FileManager getFileManager() {
         return fileManager;
     }
@@ -485,6 +497,10 @@ public abstract class AppController {
 
     public OrderManager getOrderManager() {
         return orderManager;
+    }
+
+    public UserManager getUserManager() {
+        return userManager;
     }
 
     // ==================== Abstract Methods (UI must implement) ====================

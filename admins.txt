@@ -1,2 +1,3 @@
 # Format: AdminId, Username, Name, Email
 32098672-8962-4b4e-8816-c4beefa9114c, Admin123, Admin, Admin@gmail.com
+5fedca22-78ad-4401-a391-27d9dcd597f4, admin_boss, Boss Admin, boss@email.com

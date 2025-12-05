@@ -1,1 +1,3 @@
 # Format: ItemId, Name, Category, Price, RestaurantId
+c9dbd1fc-cb3a-4390-888d-895daa64d01f, Coffee, Drinks, 2.99, 7e938710-fc6c-4edd-8745-e353c5e1bf9d
+b003366a-032b-4b6d-b3dd-0da0613a87b5, Coffee, Drinks, 2.99, e5284b1d-d284-46b8-a80a-21cca31b70be
