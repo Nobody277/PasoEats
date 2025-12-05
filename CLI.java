@@ -1,5 +1,9 @@
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Command Line Interface implementation of the PasoEats application.
@@ -222,7 +226,67 @@ public class CLI extends AppController {
             int choice = readIntInput("");
             switch(choice){
                 case 1:
-                    System.out.println("Place An Order - TODO");
+                    try {
+                        System.out.println("\nAvailable Restaurants:");
+                        System.out.println(getAllRestaurantsString());
+                        
+                        List<Restaurant> restaurants = getAllRestaurants();
+                        if (restaurants.isEmpty()) {
+                            System.out.println("\n\u001B[31mNo restaurants available.\u001B[0m");
+                            waitForEnter();
+                            break;
+                        }
+                        
+                        int restaurantIndex = readIntInput("Select a restaurant: ");
+                        if (restaurantIndex < 1 || restaurantIndex > restaurants.size()) {
+                            System.out.println("\n\u001B[31mInvalid restaurant selection.\u001B[0m");
+                            waitForEnter();
+                            break;
+                        }
+                        
+                        Restaurant selectedRestaurant = restaurants.get(restaurantIndex - 1);
+                        List<MenuItem> menuItems = getRestaurantManager().getMenuItemsForRestaurant(selectedRestaurant.getRestaurantId());
+                        
+                        if (menuItems.isEmpty()) {
+                            System.out.println("\n\u001B[31mNo menu items available for this restaurant.\u001B[0m");
+                            waitForEnter();
+                            break;
+                        }
+                        
+                        System.out.println("\nMenu Items:");
+                        for (int i = 0; i < menuItems.size(); i++) {
+                            System.out.println("    " + (i + 1) + ". " + menuItems.get(i).detailsToString());
+                        }
+                        
+                        String indicesInput = readStringInput("Enter items (Example: 1,2,3): ");
+                        String[] itemIds = indicesInput.split(",");
+                        List<String> items = new ArrayList<>();
+                        for (String itemId : itemIds) {
+                            items.add(itemId.trim());
+                        }
+                        
+                        if (items.isEmpty()) {
+                            System.out.println("\n\u001B[31mNo items selected.\u001B[0m");
+                            waitForEnter();
+                            break;
+                        }
+                        
+                        UUID customerId = getCurrentUserID();
+                        OrderManager.Order order = placeOrder(customerId, items);
+                        
+                        if (order != null) {
+                            System.out.println("\n\u001B[32mOrder placed!\u001B[0m");
+                            System.out.println("Order ID: " + order.getId());
+                            System.out.println("Status: " + order.getStatus());
+                            if (order.getAssignedDriverId() != null) {
+                                System.out.println("Driver assigned: " + order.getAssignedDriverId());
+                            }
+                        } else {
+                            System.out.println("\n\u001B[31mFailed to place order. No drivers available.\u001B[0m");
+                        }
+                    } catch (Exception e) {
+                        System.out.println("\n\u001B[31mError placing order: " + e.getMessage() + "\u001B[0m");
+                    }
                     waitForEnter();
                     break;
                 case 2:
@@ -230,11 +294,67 @@ public class CLI extends AppController {
                     waitForEnter();
                     break;
                 case 3:
-                    System.out.println("View A Menu - TODO");
+                    try {
+                        System.out.println("\nAvailable Restaurants:");
+                        System.out.println(getAllRestaurantsString());
+                        
+                        List<Restaurant> restaurants = getAllRestaurants();
+                        if (restaurants.isEmpty()) {
+                            System.out.println("\n\u001B[31mNo restaurants available.\u001B[0m");
+                            waitForEnter();
+                            break;
+                        }
+                        
+                        int restaurantIndex = readIntInput("Select a restaurant: ");
+                        if (restaurantIndex < 1 || restaurantIndex > restaurants.size()) {
+                            System.out.println("\n\u001B[31mInvalid restaurant selection.\u001B[0m");
+                            waitForEnter();
+                            break;
+                        }
+                        
+                        Restaurant selectedRestaurant = restaurants.get(restaurantIndex - 1);
+                        System.out.println("\n" + getRestaurantMenuString(selectedRestaurant.getRestaurantId()));
+                    } catch (Exception e) {
+                        System.out.println("\n\u001B[31mError viewing menu: " + e.getMessage() + "\u001B[0m");
+                    }
                     waitForEnter();
                     break;
                 case 4:
-                    System.out.println("Rate Most Recent Driver - TODO");
+                    try {
+                        UUID customerId = getCurrentUserID();
+                        Map<UUID, OrderManager.Order> allOrders = getOrderManager().getAllOrders();
+                        
+                        // Find most recent order for this customer with an assigned driver
+                        OrderManager.Order mostRecentOrder = null;
+                        for (OrderManager.Order order : allOrders.values()) {
+                            if (order.getCustomerId().equals(customerId) && order.getAssignedDriverId() != null) {
+                                if (mostRecentOrder == null || order.getCreatedAt().compareTo(mostRecentOrder.getCreatedAt()) > 0) {
+                                    mostRecentOrder = order;
+                                }
+                            }
+                        }
+                        
+                        if (mostRecentOrder == null) {
+                            System.out.println("\n\u001B[31mNo orders with assigned drivers found.\u001B[0m");
+                        } else {
+                            int rating = readIntInput("Enter rating (1-5): ");
+                            if (rating < 1 || rating > 5) {
+                                System.out.println("\n\u001B[31mInvalid rating. Please enter a number between 1 and 5.\u001B[0m");
+                            } else {
+                                UUID driverId = mostRecentOrder.getAssignedDriverId();
+                                Driver driver = getFileManager().getDriver(driverId);
+                                if (driver != null) {
+                                    driver.addRating(rating);
+                                    getFileManager().updateDriver(driverId, driver.isAvailable(), driver.getAvgRating());
+                                    System.out.println("\n\u001B[32mRating submitted successfully!\u001B[0m");
+                                } else {
+                                    System.out.println("\n\u001B[31mDriver not found.\u001B[0m");
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        System.out.println("\n\u001B[31mError rating driver: " + e.getMessage() + "\u001B[0m");
+                    }
                     waitForEnter();
                     break;
                 case 5:
@@ -257,7 +377,20 @@ public class CLI extends AppController {
             int choice = readIntInput("");
             switch(choice){
                 case 1:
-                    System.out.println("Change Availability - TODO");
+                    try {
+                        Driver driver = getFileManager().getDriver(getCurrentUserID());
+                        if (driver != null) {
+                            boolean currentStatus = driver.isAvailable();
+                            boolean newStatus = !currentStatus;
+                            driver.setAvailable(newStatus);
+                            getFileManager().updateDriver(getCurrentUserID(), newStatus, driver.getAvgRating());
+                            System.out.println("\n\u001B[32mAvailability changed to " + (newStatus ? "Available" : "Unavailable") + "\u001B[0m");
+                        } else {
+                            System.out.println("\n\u001B[31mDriver not found.\u001B[0m");
+                        }
+                    } catch (Exception e) {
+                        System.out.println("\n\u001B[31mError changing availability: " + e.getMessage() + "\u001B[0m");
+                    }
                     waitForEnter();
                     break;
                 case 2:
@@ -266,7 +399,33 @@ public class CLI extends AppController {
                     waitForEnter();
                     break;
                 case 3:
-                    System.out.println("Take an Order - TODO");
+                    try {
+                        UUID driverId = getCurrentUserID();
+                        Driver driver = getFileManager().getDriver(driverId);
+                        if (driver != null) {
+                            if (driver.getCurrentOrder() != null) {
+                                System.out.println("\n\u001B[31mYou already have an active order. Please complete it first.\u001B[0m");
+                            } else if (!driver.isAvailable()) {
+                                System.out.println("\n\u001B[31mYou are not available. Please change your availability first.\u001B[0m");
+                            } else {
+                                OrderManager.Order order = getOrderManager().acceptNext(driverId);
+                                if (order != null) {
+                                    driver.setCurrentOrder(order.getId());
+                                    driver.setAvailable(false);
+                                    getFileManager().updateDriver(driverId, false, driver.getAvgRating());
+                                    System.out.println("\n\u001B[32mOrder accepted successfully!\u001B[0m");
+                                    System.out.println("Order ID: " + order.getId());
+                                    System.out.println("Status: " + order.getStatus());
+                                } else {
+                                    System.out.println("\n\u001B[31mNo orders available to accept.\u001B[0m");
+                                }
+                            }
+                        } else {
+                            System.out.println("\n\u001B[31mDriver not found.\u001B[0m");
+                        }
+                    } catch (Exception e) {
+                        System.out.println("\n\u001B[31mError taking order: " + e.getMessage() + "\u001B[0m");
+                    }
                     waitForEnter();
                     break;
                 case 4:

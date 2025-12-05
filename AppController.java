@@ -35,7 +35,7 @@ public abstract class AppController {
     public AppController() {
         this.fileManager = new FileManager();
         this.restaurantManager = new RestaurantManager(fileManager);
-        this.userManager = new UserManager();
+        this.userManager = new UserManager(fileManager);
         this.orderManager = new OrderManager();
         this.driverPool = new DriverPool(fileManager);
         this.currentUserID = null;
@@ -224,7 +224,7 @@ public abstract class AppController {
             return false;
         }
 
-        return getFileManager().addCustomer(UUID.randomUUID(), name, username, email);
+        return getFileManager().addCustomer(username, name, email);
     }
 
     /**
@@ -235,10 +235,9 @@ public abstract class AppController {
      * @return Customer if successful, null otherwise
      */
     public Customer createCustomerAccount(String name, String username, String email) {
-        UUID customerId = UUID.randomUUID();
-        boolean success = getFileManager().addCustomer(customerId, username, name, email);
+        boolean success = getFileManager().addCustomer(username, name, email);
         if (success) {
-            return getFileManager().getCustomer(customerId);
+            return getFileManager().getCustomerByUsername(username);
         }
         return null;
     }
@@ -288,7 +287,7 @@ public abstract class AppController {
             return false;
         }
 
-        return getFileManager().addDriver(UUID.randomUUID(), name, username, email, true);
+        return getFileManager().addDriver(username, name, email, true);
     }
 
     /**
@@ -299,10 +298,9 @@ public abstract class AppController {
      * @return Driver if successful, null otherwise
      */
     public Driver createDriverAccount(String name, String username, String email) {
-        UUID driverId = UUID.randomUUID();
-        boolean success = getFileManager().addDriver(driverId, username, name, email, true);
+        boolean success = getFileManager().addDriver(username, name, email, true);
         if (success) {
-            return getFileManager().getDriver(driverId);
+            return getFileManager().getDriverByUsername(username);
         }
         return null;
     }
@@ -382,7 +380,7 @@ public abstract class AppController {
             return false;
         }
 
-        return getFileManager().addAdmin(UUID.randomUUID(), username, name, email);
+        return getFileManager().addAdmin(username, name, email);
     }
 
     /**
@@ -393,10 +391,9 @@ public abstract class AppController {
      * @return Administrator if successful, null otherwise
      */
     public Administrator createAdministratorAccount(String username, String name, String email) {
-        UUID adminId = UUID.randomUUID();
-        boolean success = getFileManager().addAdmin(adminId, username, name, email);
+        boolean success = getFileManager().addAdmin(username, name, email);
         if (success) {
-            return getFileManager().getAdmin(adminId);
+            return getFileManager().getAdminByUsername(username);
         }
         return null;
     }

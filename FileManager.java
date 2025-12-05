@@ -160,7 +160,7 @@ public class FileManager {
                     String category = parts[2].trim();
                     BigDecimal price = new BigDecimal(parts[3].trim());
                     UUID restaurantId = UUID.fromString(parts[4].trim());
-                    MenuItem item = new MenuItem(name, category, price.doubleValue(), restaurantId);
+                    MenuItem item = new MenuItem(name, category, price, restaurantId);
                     menuItems.put(itemId, item);
                     menuItemsList.add(item);
                 }
@@ -261,7 +261,8 @@ public class FileManager {
     /**
      * WooHoo appending shit to files!
      */
-    public boolean addRestaurant(UUID restaurantId, String name, String category) {
+    public boolean addRestaurant(String name, String category) {
+        UUID restaurantId = UUID.randomUUID();
         if (restaurants.containsKey(restaurantId)) {
             System.err.println("Restaurant with ID " + restaurantId + " already exists... idiot.");
             return false;
@@ -321,16 +322,17 @@ public class FileManager {
     /**
      * Make a new menu item and add it to the file.
      */
-    public boolean addMenuItem(UUID itemId, String name, String category, BigDecimal price, UUID restaurantId) {
+    public boolean addMenuItem(String name, String category, BigDecimal price, UUID restaurantId) {
         if (!restaurants.containsKey(restaurantId)) {
             System.err.println("Restaurant with ID " + restaurantId + " does not exist... how did you get here?");
             return false;
         }
+        MenuItem item = new MenuItem(name, category, price, restaurantId);
+        UUID itemId = item.getItemId();
         if (menuItems.containsKey(itemId)) {
             System.err.println("Menu item with ID " + itemId + " already exists... how? just how?");
             return false;
         }
-        MenuItem item = new MenuItem(name, category, price.doubleValue(), restaurantId);
         menuItems.put(itemId, item);
         menuItemsList.add(item);
         return appendToFile(MENU_FILE, itemId + ", " + name + ", " + category + ", " + price + ", " + restaurantId);
@@ -362,7 +364,7 @@ public class FileManager {
         MenuItem item = menuItems.get(itemId);
         item.setName(newName);
         item.setCategory(newCategory);
-        item.setPrice(newPrice.doubleValue());
+        item.setPrice(newPrice);
         item.setRestaurantId(newRestaurantId);
         return updateInFile(MENU_FILE, itemId.toString(), itemId + ", " + newName + ", " + newCategory + ", " + newPrice + ", " + newRestaurantId);
     }
@@ -384,7 +386,8 @@ public class FileManager {
     /**
      * Yk what no more comments you lost your comment privileges.
      */
-    public boolean addCustomer(UUID customerId, String username, String name, String email) {
+    public boolean addCustomer(String username, String name, String email) {
+        UUID customerId = UUID.randomUUID();
         if (customers.containsKey(customerId)) {
             return false;
         }
@@ -440,7 +443,8 @@ public class FileManager {
         return new HashMap<>(customers);
     }
 
-    public boolean addDriver(UUID driverId, String username, String name, String email, boolean available) {
+    public boolean addDriver(String username, String name, String email, boolean available) {
+        UUID driverId = UUID.randomUUID();
         if (drivers.containsKey(driverId)) {
             return false;
         }
@@ -507,7 +511,8 @@ public class FileManager {
         return new HashMap<>(drivers);
     }
 
-    public boolean addAdmin(UUID adminId, String username, String name, String email) {
+    public boolean addAdmin(String username, String name, String email) {
+        UUID adminId = UUID.randomUUID();
         if (admins.containsKey(adminId)) {
             return false;
         }
@@ -664,52 +669,5 @@ public class FileManager {
     private boolean updateOrderInFile(UUID orderId, OrderData order) {
         String newLine = formatOrderLine(orderId, order.getCustomerId(), order.getRestaurantId(), order.getItemIds(), order.getStatus(), order.getDriverId(), order.getCreatedAt(), order.getTotalPrice());
         return updateInFile(ORDERS_FILE, orderId, line -> newLine);
-    }
-
-    // Tests
-    public static void main(String[] args) {
-        FileManager fm = new FileManager();
-        
-        UUID restaurant1 = UUID.randomUUID();
-        UUID restaurant2 = UUID.randomUUID();
-        fm.addRestaurant(restaurant1, "Burgers N Stuff", "Diner");
-        fm.addRestaurant(restaurant2, "Coffee Star", "Coffee Shop");
-        fm.addRestaurant(restaurant1, "Duplicate", "Test");
-        fm.updateRestaurant(restaurant1, "Burgers N Stuff Updated", "Fast Food");
-        
-        UUID item1 = UUID.randomUUID();
-        UUID item2 = UUID.randomUUID();
-        UUID item3 = UUID.randomUUID();
-        fm.addMenuItem(item1, "Classic Hamburger", "Burgers", new BigDecimal("5.99"), restaurant1);
-        fm.addMenuItem(item2, "Cheeseburger", "Burgers", new BigDecimal("6.49"), restaurant1);
-        fm.addMenuItem(item3, "Coffee", "Drinks", new BigDecimal("2.99"), restaurant2);
-        fm.addMenuItem(UUID.randomUUID(), "Test", "Test", new BigDecimal("1.00"), UUID.randomUUID());
-        fm.updateMenuItem(item1, "Classic Hamburger XL", "Burgers", new BigDecimal("7.99"), restaurant1);
-        
-        UUID customer1 = UUID.randomUUID();
-        UUID customer2 = UUID.randomUUID();
-        fm.addCustomer(customer1, "john_doe", "John Doe", "john@email.com");
-        fm.addCustomer(customer2, "jane_smith", "Jane Smith", "jane@email.com");
-        
-        UUID driver1 = UUID.randomUUID();
-        UUID driver2 = UUID.randomUUID();
-        fm.addDriver(driver1, "driver_mike", "Mike Driver", "mike@email.com", true);
-        fm.addDriver(driver2, "driver_sarah", "Sarah Driver", "sarah@email.com", false);
-        fm.updateDriver(driver1, false, 4.5);
-        
-        UUID admin1 = UUID.randomUUID();
-        fm.addAdmin(admin1, "admin_boss", "Boss Admin", "boss@email.com");
-        
-        UUID order1 = UUID.randomUUID();
-        UUID order2 = UUID.randomUUID();
-        List<UUID> order1Items = Arrays.asList(item1, item2);
-        List<UUID> order2Items = Arrays.asList(item3);
-        fm.appendOrder(order1, customer1, restaurant1, order1Items, "PLACED", null, "10/28/2025 1:15 PM", 12.48);
-        fm.appendOrder(order2, customer2, restaurant2, order2Items, "PLACED", null, "10/28/2025 1:20 PM", 2.99);
-        fm.updateOrder(order1, "ACCEPTED", driver1);
-        
-        fm.removeMenuItem(item2);
-        fm.removeCustomer(customer2);
-        fm.removeRestaurant(restaurant1);
     }
 }
