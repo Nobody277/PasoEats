@@ -1,2 +1,5 @@
 # Format: CustomerId, Username, Name, Email
 ec52d3f7-2db9-47e7-a9be-f9a99a73d84b, Alan_123, Alan, Alan@gmail.com
+50070426-93d0-4576-b0f1-48d70145d7d4, Bob, bobby, bob@gmail.com
+5e3aecdc-c3fa-4c8c-ad42-7a6968424355, john_doe, John Doe, john@email.com
+bc6287a3-5201-475c-8c4b-dc574c12a373, NotOnii, Ian, ian@gmail.com

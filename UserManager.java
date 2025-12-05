@@ -1,14 +1,13 @@
-import java.io.File;
 import java.util.UUID;
 
 public class UserManager {
-    final FileManager fileManager = new FileManager();
+    private FileManager fileManager;
     
     /*
      * Constructor
      */
     public UserManager(FileManager fileManager) {
-        this.setFileManager(fileManager);
+        this.fileManager = fileManager;
     }
 
     /**
@@ -24,20 +23,19 @@ public class UserManager {
      * @param fileManager
      */
     public void setFileManager(FileManager fileManager) {
-        this.fileManager = fileManager; // final
+        this.fileManager = fileManager;
     }
 
     // ============ Customer Methods ============
     /**
      * Adds a new customer with random UUID via FileManager
+     * @param username Customer username
      * @param name Customer name
      * @param email Customer email
-     * @param password Customer password
      * @return true if successful
      */
-    public boolean addCustomer(String name, String email, String password){
-        UUID newId = UUID.randomUUID();
-        return this.fileManager.addCustomer(newId, name, email, password);
+    public boolean addCustomer(String username, String name, String email){
+        return this.fileManager.addCustomer(username, name, email);
     }
 
     /**
@@ -58,22 +56,17 @@ public class UserManager {
         return getFileManager().removeCustomer(customer);
     }
 
+    // ============ Driver Methods ============
     /**
-     * Updates a customer's information via FileManager
-     * @param customerId UUID of the customer
-     * @param name New name
-     * @param email New email
-     * @param password New password
+     * Adds a new driver with random UUID via FileManager
+     * @param username Driver username
+     * @param name Driver name
+     * @param email Driver email
+     * @param available Initial availability status
      * @return true if successful
      */
-    public boolean updateCustomer(UUID customerId, String name, String email, String password){
-        return getFileManager().updateCustomer(customerId, name, email, password);
-    }//TODO: this is not implemented yet in FileManager, or remove this method
-
-    // ============ Driver Methods ============
-    public boolean addDriver(String name, String email, String password){
-        UUID newId = UUID.randomUUID();
-        return this.fileManager.addDriver(newId, name, email, password, true);
+    public boolean addDriver(String username, String name, String email, boolean available){
+        return this.fileManager.addDriver(username, name, email, available);
     }
 
     /**
@@ -95,28 +88,26 @@ public class UserManager {
     }
 
     /**
-     * Updates a driver's information via FileManager
+     * Updates a driver's availability and rating via FileManager
      * @param driverId UUID of the driver
-     * @param name New name
-     * @param email New email
-     * @param password New password
+     * @param available New availability status
+     * @param avgRating New average rating
      * @return true if successful
      */
-    public boolean updateDriverDetails(UUID driverId, String name, String email, String password){
-        return getFileManager().updateDriver(driverId, name, email, password);
-    }//TODO: this is not implemented yet in FileManager, or remove this method
+    public boolean updateDriverDetails(UUID driverId, boolean available, double avgRating){
+        return getFileManager().updateDriver(driverId, available, avgRating);
+    }
 
     // ============ Admin Methods ============
     /**
      * Adds a new admin with random UUID via FileManager
-     * @param name
-     * @param email
-     * @param password
-     * @return
+     * @param username Admin username
+     * @param name Admin name
+     * @param email Admin email
+     * @return true if successful
      */
-    public boolean addAdmin(String name, String email, String password){
-        UUID newId = UUID.randomUUID();
-        return this.fileManager.addAdmin(newId, name, email, password);
+    public boolean addAdmin(String username, String name, String email){
+        return this.fileManager.addAdmin(username, name, email);
     }
 
     /**
@@ -137,15 +128,4 @@ public class UserManager {
         return getFileManager().removeAdmin(admin);
     }
 
-    /**
-     * Updates an admin's information via FileManager
-     * @param adminId UUID of the admin
-     * @param name New name
-     * @param email New email
-     * @param password New password
-     * @return true if successful
-     */
-    public boolean updateAdmin(UUID adminId, String name, String email, String password){
-        return getFileManager().updateAdmin(adminId, name, email, password);
-    }//TODO: this is not implemented yet in FileManager, or remove this method
 }

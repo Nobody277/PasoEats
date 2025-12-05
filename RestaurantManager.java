@@ -39,8 +39,7 @@ public class RestaurantManager {
         if (name == null || name.trim().isEmpty() || category == null || category.trim().isEmpty()) {
             return false;
         } //bad name or category
-        UUID newId = UUID.randomUUID();
-        return this.getFileManager().addRestaurant(newId, name.trim(), category.trim());
+        return this.getFileManager().addRestaurant(name.trim(), category.trim());
     }
 
     /**
@@ -80,7 +79,7 @@ public class RestaurantManager {
      * @return true if successful
      */
     public boolean addRestaurantMenuItem(String name, String category, BigDecimal price, UUID restaurantId) {
-        return this.getFileManager().addMenuItem(restaurantId, name, category, price, restaurantId);
+        return this.getFileManager().addMenuItem(name, category, price, restaurantId);
     }
 
     /**
@@ -125,7 +124,6 @@ public class RestaurantManager {
         }
         
         StringBuilder sb = new StringBuilder();
-        sb.append("=== All Restaurants ===\n");
         for (Restaurant restaurant : restaurants) {
             sb.append(restaurant.detailsToString()).append("\n");
         }
