@@ -1,4 +1,9 @@
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class OrderManager {
     public enum Status { PLACED, ACCEPTED, IN_PROGRESS, DELIVERED }
@@ -10,15 +15,17 @@ public class OrderManager {
         private Status status;
         private UUID assignedDriverId;
         private String createdAt;
+        private double totalPrice;
 
         public Order() {}
-        public Order(UUID id, UUID customerId, List<String> items) {
+        public Order(UUID id, UUID customerId, List<String> items, double totalPrice) {
             this.id = id;
             this.customerId = customerId;
             this.items = items;
             this.status = Status.PLACED;
             this.assignedDriverId = null;
             this.createdAt = new java.text.SimpleDateFormat("MM/dd/yyyy hh:mm a").format(new Date());
+            this.totalPrice = totalPrice;
         }
 
         public UUID getId() { 
@@ -44,6 +51,10 @@ public class OrderManager {
         public String getCreatedAt() { 
             return this.createdAt;
         }
+        
+        public double getTotalPrice() {
+            return this.totalPrice;
+        }
 
         public void setStatus(Status status) {
             this.status = status;
@@ -59,14 +70,14 @@ public class OrderManager {
 
     public OrderManager() {}
 
-    public Order place(UUID customerId, List<String> items) {
+    public Order place(UUID customerId, List<String> items, double totalPrice) {
         if (customerId == null) {
             throw new IllegalArgumentException("Customer ID can't be null");
         }
         if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("Items list can't be null or empty");
         }
-        Order order = new Order(UUID.randomUUID(), customerId, items);
+        Order order = new Order(UUID.randomUUID(), customerId, items, totalPrice);
         byId.put(order.getId(), order);
         intake.add(order.getId());
         return order;
@@ -109,50 +120,4 @@ public class OrderManager {
     public Map<UUID, Order> getAllOrders(){
         return byId;
     }
-
-    public static void main(String[] args) {
-        OrderManager manager = new OrderManager();
-        UUID customerId = UUID.randomUUID();
-        List<String> items = Arrays.asList("Item1", "Item2", "Item3");
-        Order order = manager.place(customerId, items);
-        System.out.println("Order placed: " + order.getId());
-        UUID driverId = UUID.randomUUID();
-        Order acceptedOrder = manager.acceptNext(driverId);
-        System.out.println("Order accepted: " + acceptedOrder.getId());
-    }
-
-    /*
-    Play by play for a customer placing an order:
-    Customer C1 places an order: placeOrder(C1, ["Item1", "Item2", "Item3"]) which triggers OrderManager.place(C1, items)
-    Which creates a new Order object with a random UUID for the ID (Oa) // Oa = a81bc81b-dead-4e5d-abff-90865d1e13b1
-    customerId = C1.getId() // C1 = 123e4567-e89b-12d3-a456-426614174000
-    status = Status.PLACED // PLACED = "PLACED"
-    assignedDriverId = null (since no driver has accepted the order yet) // D1 = 123e4567-e89b-12d3-a456-426614174000
-    createdAt = "10/28/2025 1:15" // The current date and time
-    Store it in a map for tracking by its ID (byId) `byId.put(Oa, order)`
-    Add the order ID to the intake queue (intake.add(Oa))
-
-    What the data looks like:
-    byId = { // (map)
-        Oa: Order{id=Oa, customerId=C1, items=["Item1", "Item2", "Item3"], status=PLACED, assignedDriverId=null, createdAt="10/28/2025 1:15"}
-    }
-    // With more orders the map will look like this:
-    byId = { // (map)
-        Oa: Order{id=Oa, customerId=C1, items=["Item1", "Item2", "Item3"], status=PLACED, assignedDriverId=null, createdAt="10/28/2025 1:15"},
-        Ob: Order{id=Ob, customerId=C2, items=["Item4", "Item5", "Item6"], status=PLACED, assignedDriverId=null, createdAt="10/28/2025 1:16"},
-        Oc: Order{id=Oc, customerId=C3, items=["Item7", "Item8", "Item9"], status=PLACED, assignedDriverId=null, createdAt="10/28/2025 1:17"},
-        Od: Order{id=Od, customerId=C4, items=["Item10", "Item11", "Item12"], status=PLACED, assignedDriverId=null, createdAt="10/28/2025 1:18"},
-        Oe: Order{id=Oe, customerId=C5, items=["Item13", "Item14", "Item15"], status=PLACED, assignedDriverId=null, createdAt="10/28/2025 1:19"}
-    }
-    
-    intake = [ Oa ] // (queue) FIFO (First In, First Out)
-    // With more orders the queue will look like this: [ Oa, Ob, Oc, Od, Oe, Of, Og, Oh, Oi, Oj, Ok, Ol, Om, On, Oo, Op, Oq, Or, Os, Ot, Ou, Ov, Ow, Ox, Oy, Oz ]
-    
-    The order now exists in memory.
-    It's waiting in the queue for a driver to accept it.
-    The system can look it up anytime by its ID (Oa) in the map.
-    Nothing else happens until a driver accepts it.
-
-    Customer -> create order -> store in map -> enqueue id -> wait for driver
-    */
 }

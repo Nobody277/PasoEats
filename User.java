@@ -47,11 +47,20 @@ abstract class User {
     public void setEmail(String email) {
         this.email = email;
     }
+    /**
+     * Gets a copy of the orders list
+     * @return Copy of the orders list
+     */
     public ArrayList<UUID> getOrders() {
-        return orders;
+        return new ArrayList<>(orders);
     }
+    
+    /**
+     * Sets the orders list (replaces existing orders)
+     * @param orders New orders list
+     */
     public void setOrders(ArrayList<UUID> orders) {
-        this.orders = orders;
+        this.orders = new ArrayList<>(orders);
     }
     public void addOrder(UUID orderID){
         orders.add(orderID);

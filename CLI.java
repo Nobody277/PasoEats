@@ -12,11 +12,13 @@ import java.util.UUID;
 public class CLI extends AppController {
     // CLI-specific variables
     private Scanner scanner;
+    private OrderSimulator simulator;
 
     // constructor
     public CLI(){
         super(); // Initialize AppController (managers, etc.)
         scanner = new Scanner(System.in);
+        simulator = new OrderSimulator(this);
     }
 
     // start app
@@ -28,6 +30,9 @@ public class CLI extends AppController {
 
     @Override
     public void shutdown() {
+        if (simulator != null) {
+            simulator.stop();
+        }
         System.out.println("Goodbye");
         System.out.println("Shutting Down...");
         scanner.close();
@@ -44,10 +49,11 @@ public class CLI extends AppController {
         System.out.println("Main Menu");
         System.out.println("    1. Register");
         System.out.println("    2. Login");
-        System.out.println("    3. Shut Down");
+        System.out.println("    3. View Live");
+        System.out.println("    4. Shut Down");
         
         //logic start
-        mainMenuLogic(readIntInput("Please Choose an Option (1-3) \n"));
+        mainMenuLogic(readIntInput("Please Choose an Option (1-4) \n"));
     }
 
     // main menu logic
@@ -175,14 +181,43 @@ public class CLI extends AppController {
                     input = readIntInput("Please Choose an Option (1-3) \n");
                     break;
                 }
-            case 3: // Shut Down
+            case 3:
+                try {
+                    System.out.println("Press Enter to stop simulation and return to menu");
+                    simulator.start();
+
+                    Thread statusThread = new Thread(() -> {
+                        while (simulator.isRunning()) {
+                            try {
+                                Thread.sleep(500);
+                                simulator.displayStatus();
+                            } catch (InterruptedException e) {
+                                break;
+                            }
+                        }
+                    });
+                    statusThread.setDaemon(true);
+                    statusThread.start();
+                    
+                    scanner.nextLine();
+                    simulator.stop();
+                } catch (Exception e) {
+                    System.out.println("\n\u001B[31mError in simulation: " + e.getMessage() + "\u001B[0m");
+                    simulator.stop();
+                }
+                waitForEnter();
+                printLogin();
+                input = readIntInput("Please Choose an Option (1-4) \n");
+                break;
+            case 4: // Shut Down
+                simulator.stop();
                 shutdown();
                 return;
             default:
-                System.out.println("\n\u001B[31mInvalid choice. Please enter a number between 1 and 3.\u001B[0m");
+                System.out.println("\n\u001B[31mInvalid choice. Please enter a number between 1 and 4.\u001B[0m");
                 waitForEnter();
                 printLogin();
-                input = readIntInput("Please Choose an Option (1-3) \n");
+                input = readIntInput("Please Choose an Option (1-4) \n");
             }
         }
     }
@@ -259,12 +294,30 @@ public class CLI extends AppController {
                         }
                         
                         String indicesInput = readStringInput("Enter items (Example: 1,2,3): ");
-                        String[] itemIds = indicesInput.split(",");
+                        String[] indexTokens = indicesInput.split(",");
                         List<String> items = new ArrayList<>();
-                        for (String itemId : itemIds) {
-                            items.add(itemId.trim());
+
+                        for (String token : indexTokens) {
+                            String trimmed = token.trim();
+                            if (trimmed.isEmpty()) {
+                                continue;
+                            }
+                            try {
+                                int itemIndex = Integer.parseInt(trimmed);
+                                if (itemIndex < 1 || itemIndex > menuItems.size()) {
+                                    System.out.println("\n\u001B[31mInvalid item selection: " + itemIndex + "\u001B[0m");
+                                    items.clear();
+                                    break;
+                                }
+                                MenuItem selectedItem = menuItems.get(itemIndex - 1);
+                                items.add(selectedItem.getItemId().toString());
+                            } catch (NumberFormatException nfe) {
+                                System.out.println("\n\u001B[31mInvalid item entry: " + trimmed + " (must be a number)\u001B[0m");
+                                items.clear();
+                                break;
+                            }
                         }
-                        
+
                         if (items.isEmpty()) {
                             System.out.println("\n\u001B[31mNo items selected.\u001B[0m");
                             waitForEnter();
@@ -429,7 +482,54 @@ public class CLI extends AppController {
                     waitForEnter();
                     break;
                 case 4:
-                    System.out.println("Update Current Order - TODO");
+                    try {
+                        UUID driverId = getCurrentUserID();
+                        Driver driver = getFileManager().getDriver(driverId);
+                        if (driver != null) {
+                            UUID currentOrderId = driver.getCurrentOrder();
+                            if (currentOrderId == null) {
+                                System.out.println("\n\u001B[31mYou don't have a current order.\u001B[0m");
+                            } else {
+                                OrderManager.Order order = getOrderManager().get(currentOrderId);
+                                if (order == null) {
+                                    System.out.println("\n\u001B[31mOrder not found.\u001B[0m");
+                                } else {
+                                    OrderManager.Status currentStatus = order.getStatus();
+                                    System.out.println("\nCurrent Order ID: " + currentOrderId);
+                                    System.out.println("Current Status: " + currentStatus);
+                                    
+                                    if (currentStatus == OrderManager.Status.ACCEPTED) {
+                                        System.out.println("\n    1. Mark as In Progress");
+                                        int statusChoice = readIntInput("Select option (1): ");
+                                        if (statusChoice == 1) {
+                                            driver.updateOrderStatus(getOrderManager(), OrderManager.Status.IN_PROGRESS);
+                                            System.out.println("\n\u001B[32mOrder status updated to IN_PROGRESS.\u001B[0m");
+                                        } else {
+                                            System.out.println("\n\u001B[31mInvalid choice.\u001B[0m");
+                                        }
+                                    } else if (currentStatus == OrderManager.Status.IN_PROGRESS) {
+                                        System.out.println("\n    1. Mark as Delivered");
+                                        int statusChoice = readIntInput("Select option (1): ");
+                                        if (statusChoice == 1) {
+                                            driver.updateOrderStatus(getOrderManager(), OrderManager.Status.DELIVERED);
+                                            driver.setCurrentOrder(null);
+                                            driver.setAvailable(true);
+                                            getFileManager().updateDriver(driverId, true, driver.getAvgRating());
+                                            System.out.println("\n\u001B[32mOrder delivered! You are now available.\u001B[0m");
+                                        } else {
+                                            System.out.println("\n\u001B[31mInvalid choice.\u001B[0m");
+                                        }
+                                    } else {
+                                        System.out.println("\n\u001B[31mOrder is already " + currentStatus + ". No updates available.\u001B[0m");
+                                    }
+                                }
+                            }
+                        } else {
+                            System.out.println("\n\u001B[31mDriver not found.\u001B[0m");
+                        }
+                    } catch (Exception e) {
+                        System.out.println("\n\u001B[31mError updating order: " + e.getMessage() + "\u001B[0m");
+                    }
                     waitForEnter();
                     break;
                 case 5:
@@ -452,11 +552,110 @@ public class CLI extends AppController {
             int choice = readIntInput("");
             switch(choice){
                 case 1:
-                    System.out.println("Manage Restaurants - TODO");
+                    try {
+                        System.out.println("\nManage Restaurants");
+                        System.out.println("    1. View All Restaurants");
+                        System.out.println("    2. Add Restaurant");
+                        System.out.println("    3. Remove Restaurant");
+                        System.out.println("    4. Update Restaurant");
+                        System.out.println("    5. Add Menu Item to Restaurant");
+                        int restaurantChoice = readIntInput("Select option (1-5): ");
+                        
+                        switch(restaurantChoice) {
+                            case 1:
+                                System.out.println("\n" + getAllRestaurantsString());
+                                break;
+                            case 2:
+                                String name = readStringInput("Enter restaurant name: ");
+                                String category = readStringInput("Enter category: ");
+                                if (addRestaurant(name, category)) {
+                                    System.out.println("\n\u001B[32mRestaurant added successfully!\u001B[0m");
+                                } else {
+                                    System.out.println("\n\u001B[31mFailed to add restaurant.\u001B[0m");
+                                }
+                                break;
+                            case 3:
+                                System.out.println("\n" + getAllRestaurantsString());
+                                List<Restaurant> restaurants = getAllRestaurants();
+                                if (!restaurants.isEmpty()) {
+                                    int index = readIntInput("Select restaurant to remove: ");
+                                    if (index >= 1 && index <= restaurants.size()) {
+                                        if (removeRestaurant(restaurants.get(index - 1).getRestaurantId())) {
+                                            System.out.println("\n\u001B[32mRestaurant removed successfully!\u001B[0m");
+                                        } else {
+                                            System.out.println("\n\u001B[31mFailed to remove restaurant.\u001B[0m");
+                                        }
+                                    } else {
+                                        System.out.println("\n\u001B[31mInvalid selection.\u001B[0m");
+                                    }
+                                }
+                                break;
+                            case 4:
+                                System.out.println("\n" + getAllRestaurantsString());
+                                restaurants = getAllRestaurants();
+                                if (!restaurants.isEmpty()) {
+                                    int index = readIntInput("Select restaurant to update: ");
+                                    if (index >= 1 && index <= restaurants.size()) {
+                                        String newName = readStringInput("Enter new name: ");
+                                        String newCategory = readStringInput("Enter new category: ");
+                                        if (updateRestaurant(restaurants.get(index - 1).getRestaurantId(), newName, newCategory)) {
+                                            System.out.println("\n\u001B[32mRestaurant updated successfully!\u001B[0m");
+                                        } else {
+                                            System.out.println("\n\u001B[31mFailed to update restaurant.\u001B[0m");
+                                        }
+                                    } else {
+                                        System.out.println("\n\u001B[31mInvalid selection.\u001B[0m");
+                                    }
+                                }
+                                break;
+                            case 5:
+                                System.out.println("\n" + getAllRestaurantsString());
+                                restaurants = getAllRestaurants();
+                                if (!restaurants.isEmpty()) {
+                                    int index = readIntInput("Select restaurant: ");
+                                    if (index >= 1 && index <= restaurants.size()) {
+                                        String itemName = readStringInput("Enter menu item name: ");
+                                        String itemCategory = readStringInput("Enter menu item category: ");
+                                        System.out.print("Enter price: ");
+                                        double price = scanner.nextDouble();
+                                        scanner.nextLine();
+                                        if (addMenuItemToRestaurant(itemName, itemCategory, price, restaurants.get(index - 1).getRestaurantId())) {
+                                            System.out.println("\n\u001B[32mMenu item added successfully!\u001B[0m");
+                                        } else {
+                                            System.out.println("\n\u001B[31mFailed to add menu item.\u001B[0m");
+                                        }
+                                    } else {
+                                        System.out.println("\n\u001B[31mInvalid selection.\u001B[0m");
+                                    }
+                                }
+                                break;
+                            default:
+                                System.out.println("\n\u001B[31mInvalid choice.\u001B[0m");
+                        }
+                    } catch (Exception e) {
+                        System.out.println("\n\u001B[31mError managing restaurants: " + e.getMessage() + "\u001B[0m");
+                    }
                     waitForEnter();
                     break;
                 case 2:
-                    System.out.println("View All Orders - TODO");
+                    try {
+                        Map<UUID, OrderManager.Order> orders = getAllOrders();
+                        if (orders == null || orders.isEmpty()) {
+                            System.out.println("\n\u001B[31mNo orders found.\u001B[0m");
+                        } else {
+                            System.out.println("\nAll Orders:");
+                            for (OrderManager.Order order : orders.values()) {
+                                System.out.println("Order ID: " + order.getId());
+                                System.out.println("Customer ID: " + order.getCustomerId());
+                                System.out.println("Status: " + order.getStatus());
+                                System.out.println("Items: " + order.getItems());
+                                System.out.println("Driver ID: " + (order.getAssignedDriverId() != null ? order.getAssignedDriverId() : "Not assigned"));
+                                System.out.println("Created At: " + order.getCreatedAt());
+                            }
+                        }
+                    } catch (Exception e) {
+                        System.out.println("\n\u001B[31mError viewing orders: " + e.getMessage() + "\u001B[0m");
+                    }
                     waitForEnter();
                     break;
                 case 3:
