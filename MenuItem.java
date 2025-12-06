@@ -8,8 +8,27 @@ public class MenuItem {
     private BigDecimal price;
     private UUID restaurantId;
 
+    /**
+     * Constructor for creating a new menu item with auto-generated UUID
+     * @param name Menu item name
+     * @param category Menu item category
+     * @param price Menu item price
+     * @param restaurantId Restaurant ID this item belongs to
+     */
     public MenuItem(String name, String category, BigDecimal price, UUID restaurantId) {
-        this.itemId = UUID.randomUUID();
+        this(UUID.randomUUID(), name, category, price, restaurantId);
+    }
+
+    /**
+     * Constructor for loading existing menu item from file with existing UUID
+     * @param itemId Existing item ID
+     * @param name Menu item name
+     * @param category Menu item category
+     * @param price Menu item price
+     * @param restaurantId Restaurant ID this item belongs to
+     */
+    public MenuItem(UUID itemId, String name, String category, BigDecimal price, UUID restaurantId) {
+        this.itemId = itemId;
         this.name = name;
         this.category = category;
         this.price = price;

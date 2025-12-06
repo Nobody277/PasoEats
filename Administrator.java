@@ -8,10 +8,6 @@ public class Administrator extends User {
     }
 
     // methods
-    public void manageRestaurants(){
-        //TODO
-        // open a CLI menu to manage restaurants in
-    }
     public Map<UUID, OrderManager.Order> getAllOrders(OrderManager orderManager){
         return orderManager.getAllOrders();
     }

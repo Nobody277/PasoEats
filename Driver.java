@@ -5,18 +5,18 @@ public class Driver extends User implements Comparable<Driver> {
     private boolean available;
     private double avgRating;
     private int rateCounter;
-    private int[] ratings;
+    private final int[] ratings;
     private UUID currentOrder;
 
     // constructor
     public Driver(UUID id, String name, String username, String email){
         super(id, name, username, email);
-        ratings = new int[10];
+        this.ratings = new int[10];
         for(int i = 0; i < ratings.length; i++){
             ratings[i] = -1; // set empty ratings to -1
         }
-        rateCounter = 0;
-        avgRating = 0;
+        this.rateCounter = 0;
+        this.avgRating = 0.0;
     }
     
     // getters & setters
@@ -32,18 +32,6 @@ public class Driver extends User implements Comparable<Driver> {
     public void setAvgRating(double avgRating) {
         this.avgRating = avgRating;
     }
-    public int getRateCounter() {
-        return rateCounter;
-    }
-    public void setRateCounter(int rateCounter) {
-        this.rateCounter = rateCounter;
-    }
-    public int[] getRatings() {
-        return ratings;
-    }
-    public void setRatings(int[] ratings) {
-        this.ratings = ratings;
-    }
     public UUID getCurrentOrder() {
         return currentOrder;
     }
@@ -55,21 +43,29 @@ public class Driver extends User implements Comparable<Driver> {
     public void updateOrderStatus(OrderManager orderManager, OrderManager.Status status){
         orderManager.markStatus(currentOrder, status);
     }
-    public void calcAvgRating(){
-        int temp = 0;
-        int counter = 0;
+    /**
+     * Calculates the average rating from the ratings array... duh?
+     */
+    private void calcAvgRating(){
+        int sum = 0;
+        int count = 0;
         for(int rating : ratings){
-            if(rating == -1){ // ignore empty ratings
-                continue;
-            }
-            else{
-                temp += rating; // add rating
-                counter++; // increment counter
+            if(rating != -1){ // ignore empty ratings
+                sum += rating;
+                count++;
             }
         }
-        avgRating = (counter > 0) ? (temp / counter) : 0.0; // average is the sum of ratings divided by number of ratings
+        avgRating = (count > 0) ? ((double) sum / count) : 0.0;
     }
+    /**
+     * Adds a new rating to the driver's rating history
+     * Maintains only the last 10 ratings using a circular buffer
+     * @param newRating Rating value (1-5)
+     */
     public void addRating(int newRating){
+        if (newRating < 1 || newRating > 5) {
+            throw new IllegalArgumentException("Rating must be between 1 and 5");
+        }
         ratings[rateCounter] = newRating;
         rateCounter = (rateCounter + 1) % ratings.length;
         calcAvgRating();

@@ -84,6 +84,26 @@ public class FileManager {
         loadOrders();
     }
 
+    public void reset() {
+        menuItems.clear();
+        menuItemsList.clear();
+        restaurants.clear();
+        restaurantsList.clear();
+        customers.clear();
+        drivers.clear();
+        admins.clear();
+        orders.clear();
+        createFiles();
+        try {
+            Files.write(Paths.get(RESTAURANTS_FILE), Arrays.asList("# Format: RestaurantId, Name, Category"));
+            Files.write(Paths.get(MENU_FILE), Arrays.asList("# Format: ItemId, Name, Category, Price, RestaurantId"));
+            Files.write(Paths.get(CUSTOMERS_FILE), Arrays.asList("# Format: CustomerId, Username, Name, Email"));
+            Files.write(Paths.get(DRIVERS_FILE), Arrays.asList("# Format: DriverId, Username, Name, Email, Available, AvgRating"));
+            Files.write(Paths.get(ADMINS_FILE), Arrays.asList("# Format: AdminId, Username, Name, Email"));
+            Files.write(Paths.get(ORDERS_FILE), Arrays.asList("# Format: OrderId, CustomerId, RestaurantId, ItemIds, Status, DriverId, CreatedAt, TotalPrice"));
+        } catch (IOException e) {}
+    }
+
     /**
      * Creates all the files and adds the headers for each file
      */
@@ -160,7 +180,7 @@ public class FileManager {
                     String category = parts[2].trim();
                     BigDecimal price = new BigDecimal(parts[3].trim());
                     UUID restaurantId = UUID.fromString(parts[4].trim());
-                    MenuItem item = new MenuItem(name, category, price, restaurantId);
+                    MenuItem item = new MenuItem(itemId, name, category, price, restaurantId);
                     menuItems.put(itemId, item);
                     menuItemsList.add(item);
                 }

@@ -38,11 +38,13 @@ public class DriverPool {
 
     /**
      * Gets the next available driver from the pool and sets them to unavailable
-     * @return Driver
+     * @return Driver if available, null if pool is empty
      */
     public Driver getNextAvailableDriver() {
         Driver driver = this.driverPool.poll();
-        driver.setAvailable(false);
+        if (driver != null) {
+            driver.setAvailable(false);
+        }
         return driver;
     }
 
